@@ -98,9 +98,15 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, arg):
-        """create: create [ARG]
+        """create: create [ARG] [PARAM 1] [PARAM 2] ...
         ARG = Class Name
-        SYNOPSIS: Creates a new instance of the Class from given input ARG"""
+        PARAM = <key name>=<value>
+                value syntax: "<value>"
+        SYNOPSIS: Creates a new instance of the Class from given input ARG
+                  and PARAMS. Key in PARAM = an instance attribute.
+        EXAMPLE: create City name="Chicago"
+                 City.create(name="Chicago")
+        """
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
@@ -114,7 +120,10 @@ class HBNBCommand(cmd.Cmd):
         """show: show [ARG] [ARG1]
         ARG = Class
         ARG1 = ID #
-        SYNOPSIS: Prints object of given ID from given Class"""
+        SYNOPSIS: Prints object of given ID from given Class
+        EXAMPLE: show City 1234-abcd-5678-efgh
+                 City.show(1234-abcd-5678-efgh)
+        """
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
@@ -124,13 +133,14 @@ class HBNBCommand(cmd.Cmd):
             for k, v in fs_o.items():
                 if arg[1] in k and arg[0] in k:
                     print(v)
-                    return
-            print(HBNBCommand.ERR[3])
 
     def do_all(self, arg):
         """all: all [ARG]
         ARG = Class
-        SYNOPSIS: prints all objects of given class"""
+        SYNOPSIS: prints all objects of given class
+        EXAMPLE: all City
+                 City.all()
+        """
         arg = arg.split()
         error = 0
         if arg:
@@ -159,7 +169,10 @@ class HBNBCommand(cmd.Cmd):
         """destroy: destroy [ARG] [ARG1]
         ARG = Class
         ARG1 = ID #
-        SYNOPSIS: destroys object of given ID from given Class"""
+        SYNOPSIS: destroys object of given ID from given Class
+        EXAMPLE: destroy City 1234-abcd-5678-efgh
+                 City.destroy(1234-abcd-5678-efgh)
+        """
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
@@ -170,10 +183,9 @@ class HBNBCommand(cmd.Cmd):
                 if arg[1] in k and arg[0] in k:
                     del fs_o[k]
                     FS.save()
-                    return
-            print(HBNBCommand.ERR[3])
 
     def __rreplace(self, s, l):
+        """replaces characters from input list with input string"""
         for c in l:
             s = s.replace(c, '')
         return s
@@ -206,17 +218,13 @@ class HBNBCommand(cmd.Cmd):
             fs_o = FS.all()
             for k in fs_o.keys():
                 if arg[1] in k and arg[0] in k:
-                    valid_id = 1
                     key = k
-            if not valid_id:
-                print(HBNBCommand.ERR[3])
+            if len(arg) < 3:
+                print(HBNBCommand.ERR[4])
+            elif len(arg) < 4:
+                print(HBNBCommand.ERR[5])
             else:
-                if len(arg) < 3:
-                    print(HBNBCommand.ERR[4])
-                elif len(arg) < 4:
-                    print(HBNBCommand.ERR[5])
-                else:
-                    return [1, arg, d, fs_o, key]
+                return [1, arg, d, fs_o, key]
         return [0]
 
     def do_update(self, arg):
@@ -225,7 +233,10 @@ class HBNBCommand(cmd.Cmd):
         ARG1 = ID #
         ARG2 = attribute name
         ARG3 = value of new attribute
-        SYNOPSIS: updates or adds a new attribute and value of given Class"""
+        SYNOPSIS: updates or adds a new attribute and value of given Class
+        EXAMPLE: update City 1234-abcd-5678-efgh name Chicago
+                 City.update(1234-abcd-5678-efgh, name, Chicago)
+        """
         arg_inv = self.__handle_update_err(arg)
         if arg_inv[0]:
             arg = arg_inv[1]
@@ -279,6 +290,7 @@ class HBNBCommand(cmd.Cmd):
         self.__parse_exec('User', arg)
 
     def __count(self, arg):
+        """counts the number objects in File Storage"""
         args = arg.split()
         fs_o = FS.all()
         count = 0
@@ -288,6 +300,8 @@ class HBNBCommand(cmd.Cmd):
         print(count)
 
     def __parse_exec(self, c, arg):
+        """parses the input from .function() syntax, calls appropriate function
+        """
         CMD_MATCH = {
             '.all': self.do_all,
             '.count': self.__count,
@@ -308,4 +322,5 @@ class HBNBCommand(cmd.Cmd):
         self.default(arg)
 
 if __name__ == '__main__':
+    """MAIN function"""
     HBNBCommand().cmdloop()
