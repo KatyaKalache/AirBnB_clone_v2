@@ -97,6 +97,14 @@ class HBNBCommand(cmd.Cmd):
         print()
         return True
 
+    def create_dict(self, d, arg):
+        """creates dictionary from input paramaters to create() function"""
+        for s in arg:
+            if '=' in s:
+                temp = s.split('=')
+                d[temp[0]] = temp[1]
+        return d
+
     def do_create(self, arg):
         """create: create [ARG] [PARAM 1] [PARAM 2] ...
         ARG = Class Name
@@ -112,7 +120,13 @@ class HBNBCommand(cmd.Cmd):
         if not error:
             for k, v in CNC.items():
                 if k == arg[0]:
-                    my_obj = v()
+                    d = {}
+                    if len(arg) > 1:
+                        d = self.create_dict(d, arg[1:])
+                    if d:
+                        my_obj = v(**d)
+                    else:
+                        my_obj = v()
                     my_obj.save()
                     print(my_obj.id)
 
@@ -236,6 +250,7 @@ class HBNBCommand(cmd.Cmd):
         SYNOPSIS: updates or adds a new attribute and value of given Class
         EXAMPLE: update City 1234-abcd-5678-efgh name Chicago
                  City.update(1234-abcd-5678-efgh, name, Chicago)
+                 City.update(1234-abcd, {'name': 'Chicago', 'address': 'None'})
         """
         arg_inv = self.__handle_update_err(arg)
         if arg_inv[0]:

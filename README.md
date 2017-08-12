@@ -70,9 +70,14 @@ BaseModel  EOF   Review  User   all     destroy  quit  update
 class method with .function() syntax
         Usage: User.<command>(<id>)
 (hbnb) help create
-create: create [ARG]
+create: create [ARG] [PARAM 1] [PARAM 2] ...
         ARG = Class Name
+        PARAM = <key name>=<value>
+                value syntax: "<value>"
         SYNOPSIS: Creates a new instance of the Class from given input ARG
+                  and PARAMS. Key in PARAM = an instance attribute.
+        EXAMPLE: create City name="Chicago"
+                 City.create(name="Chicago")
 ```
 
 * Tests in the CLI may also be executed with this syntax:
