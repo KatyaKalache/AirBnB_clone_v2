@@ -60,8 +60,16 @@ class HBNBCommand(cmd.Cmd):
         """private checks for missing ID or unknown ID"""
         error = 0
         if (len(arg) < 2):
+            error += 1
             print(HBNBCommand.ERR[2])
-            error = 1
+        if not error:
+            fs_o = FS.all()
+            for k, v in fs_o.items():
+                temp_id = k.split('.')[1]
+                if temp_id == arg[1] and arg[0] in k:
+                    return error
+            error += 1
+            print(HBNBCommand.ERR[3])
         return error
 
     def do_airbnb(self, arg):
@@ -185,13 +193,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             return None
 
-    def do_update(self, arg):
-        """update: update [ARG] [ARG1] [ARG2] [ARG3]
-        ARG = Class
-        ARG1 = ID #
-        ARG2 = attribute name
-        ARG3 = value of new attribute
-        SYNOPSIS: updates or adds a new attribute and value of given Class"""
+    def __handle_update_err(self, arg):
+        """checks for all errors in update"""
         d = self.__check_dict(arg)
         arg = self.__rreplace(arg, [',', '"'])
         arg = arg.split()
@@ -213,16 +216,32 @@ class HBNBCommand(cmd.Cmd):
                 elif len(arg) < 4:
                     print(HBNBCommand.ERR[5])
                 else:
-                    if not d:
-                        avalue = arg[3].strip('"')
-                        if avalue.isdigit():
-                            avalue = int(avalue)
-                        fs_o[key].bm_update(arg[2], avalue)
-                    else:
-                        for k, v in d.items():
-                            if v.isdigit():
-                                v = int(v)
-                            fs_o[key].bm_update(k, v)
+                    return [1, arg, d, fs_o, key]
+        return [0]
+
+    def do_update(self, arg):
+        """update: update [ARG] [ARG1] [ARG2] [ARG3]
+        ARG = Class
+        ARG1 = ID #
+        ARG2 = attribute name
+        ARG3 = value of new attribute
+        SYNOPSIS: updates or adds a new attribute and value of given Class"""
+        arg_inv = self.__handle_update_err(arg)
+        if arg_inv[0]:
+            arg = arg_inv[1]
+            d = arg_inv[2]
+            fs_o = arg_inv[3]
+            key = arg_inv[4]
+            if not d:
+                avalue = arg[3].strip('"')
+                if avalue.isdigit():
+                    avalue = int(avalue)
+                fs_o[key].bm_update(arg[2], avalue)
+            else:
+                for k, v in d.items():
+                    if v.isdigit():
+                        v = int(v)
+                    fs_o[key].bm_update(k, v)
 
     def do_BaseModel(self, arg):
         """class method with .function() syntax
