@@ -1,4 +1,8 @@
-# <img src="https://github.com/johncoleman83/AirBnB_clone/blob/master/dev/HBTN-hbnb-Final.png" width="160" height=auto /> AirBnB Clone
+<img src="https://github.com/johncoleman83/AirBnB_clone/blob/master/dev/HBTN-hbnb-Final.png" width="160" height=auto />
+
+# AirBnB Clone Phase #2
+
+: mysql database, python sqlalchemy, & updated unittests
 
 ## Description
 
@@ -9,12 +13,12 @@ database, storage, RESTful API, Web Framework, and Front End.
 
 * __OS:__ Ubuntu 14.04 LTS
 * __language:__ Python 3.4.3
+* __database:__ mysql Ver 14.14 Distrib 5.7.18
 * __style:__ PEP 8 (v. 1.7.0)
 
 <img src="https://github.com/johncoleman83/AirBnB_clone/blob/master/dev/hbnb_step5.png" />
 
 ## Testing
-
 
 #### `unittest`
 
@@ -89,6 +93,7 @@ github repo
 
 * MJ Johnson, [@mj31508](https://github.com/mj31508)
 * David John Coleman II, [davidjohncoleman.com](http://www.davidjohncoleman.com/)
+* Katya Kalache, [@katyakalache](https://github.com/katyakalache)
 
 ## License
 
