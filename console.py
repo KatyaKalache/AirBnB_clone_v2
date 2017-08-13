@@ -97,12 +97,35 @@ class HBNBCommand(cmd.Cmd):
         print()
         return True
 
+    def __isfloat(self, val):
+        try:
+            float(val)
+            return True
+        except:
+            return False
+
+    def __update_val(self, v):
+        if v[0] == '"':
+            v = v[1:]
+        if v[-1] == '"':
+            v = v[0:-1]
+        v = v.replace('"', '\"')
+        v = v.replace('_', ' ')
+        if v.isdigit():
+            v = int(v)
+        if self.__isfloat(v):
+            v = float(v)
+        return v
+
     def create_dict(self, d, arg):
-        """creates dictionary from input paramaters to create() function"""
+        """creates dictionary from input paramaters of create() function"""
         for s in arg:
             if '=' in s:
                 temp = s.split('=')
-                d[temp[0]] = temp[1]
+                k = temp[0]
+                v = temp[1]
+                v = self.__update_val(v)
+                d[k] = v
         return d
 
     def do_create(self, arg):
@@ -123,10 +146,7 @@ class HBNBCommand(cmd.Cmd):
                     d = {}
                     if len(arg) > 1:
                         d = self.create_dict(d, arg[1:])
-                    if d:
-                        my_obj = v(**d)
-                    else:
-                        my_obj = v()
+                    my_obj = (v(**d) if d else v())
                     my_obj.save()
                     print(my_obj.id)
 
@@ -198,8 +218,8 @@ class HBNBCommand(cmd.Cmd):
                     del fs_o[k]
                     FS.save()
 
-    def __rreplace(self, s, l):
-        """replaces characters from input list with input string"""
+    def __rremove(self, s, l):
+        """removes characters in the input list from input string"""
         for c in l:
             s = s.replace(c, '')
         return s
@@ -222,7 +242,7 @@ class HBNBCommand(cmd.Cmd):
     def __handle_update_err(self, arg):
         """checks for all errors in update"""
         d = self.__check_dict(arg)
-        arg = self.__rreplace(arg, [',', '"'])
+        arg = self.__rremove(arg, [',', '"'])
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
@@ -331,7 +351,7 @@ class HBNBCommand(cmd.Cmd):
             for k, v in CMD_MATCH.items():
                 if k == check[0]:
                     if ((',' or '"' in new_arg) and k != '.update'):
-                        new_arg = self.__rreplace(new_arg, ['"', ','])
+                        new_arg = self.__rremove(new_arg, ['"', ','])
                     v(new_arg)
                     return
         self.default(arg)
