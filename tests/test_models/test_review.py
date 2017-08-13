@@ -6,6 +6,7 @@ import unittest
 from datetime import datetime
 import models
 import json
+import inspect
 
 Review = models.review.Review
 BaseModel = models.base_model.BaseModel
@@ -13,6 +14,8 @@ BaseModel = models.base_model.BaseModel
 
 class TestReviewDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
+
+    all_funcs = inspect.getmembers(Review, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -33,11 +36,11 @@ class TestReviewDocs(unittest.TestCase):
         actual = Review.__doc__
         self.assertEqual(expected, actual)
 
-    def test_doc_init(self):
-        """... documentation for init function"""
-        expected = 'instantiates a new review'
-        actual = Review.__init__.__doc__
-        self.assertEqual(expected, actual)
+    def test_all_function_docs(self):
+        """... tests for ALL DOCS for all functions in amenity file"""
+        AF = TestReviewDocs.all_funcs
+        for f in AF:
+            self.assertTrue(len(f[1].__doc__) > 1)
 
 
 class TestReviewInstances(unittest.TestCase):

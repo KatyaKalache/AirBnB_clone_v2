@@ -6,6 +6,7 @@ import unittest
 from datetime import datetime
 import models
 import json
+import inspect
 
 User = models.user.User
 BaseModel = models.base_model.BaseModel
@@ -13,6 +14,8 @@ BaseModel = models.base_model.BaseModel
 
 class TestUserDocs(unittest.TestCase):
     """Class for testing User Class docs"""
+
+    all_funcs = inspect.getmembers(User, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -33,11 +36,11 @@ class TestUserDocs(unittest.TestCase):
         actual = User.__doc__
         self.assertEqual(expected, actual)
 
-    def test_doc_init(self):
-        """... documentation for init function"""
-        expected = 'instantiates a new user'
-        actual = User.__init__.__doc__
-        self.assertEqual(expected, actual)
+    def test_all_function_docs(self):
+        """... tests for ALL DOCS for all functions in User file"""
+        AF = TestUserDocs.all_funcs
+        for f in AF:
+            self.assertTrue(len(f[1].__doc__) > 1)
 
 
 class TestUserInstances(unittest.TestCase):

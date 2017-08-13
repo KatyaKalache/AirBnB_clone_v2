@@ -6,6 +6,7 @@ import unittest
 import models
 from datetime import datetime
 import console
+import inspect
 
 Place = models.place.Place
 HBNBCommand = console.HBNBCommand
@@ -14,6 +15,8 @@ FS = console.FS
 
 class TestHBNBCommandDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
+
+    all_funcs = inspect.getmembers(console.HBNBCommand, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -35,6 +38,13 @@ class TestHBNBCommandDocs(unittest.TestCase):
         actual = HBNBCommand.__doc__
         self.assertEqual(expected, actual)
 
+    def test_all_function_docs(self):
+        """... tests for ALL DOCS for all functions in console file"""
+        AF = TestHBNBCommandDocs.all_funcs
+        for f in AF:
+            if "_HBNBCommand_" in f[0]:
+                self.assertTrue(len(f[1].__doc__) > 1)
+
 
 class TestHBNBCommandI(unittest.TestCase):
     """testing for class instances"""
@@ -50,7 +60,7 @@ class TestHBNBCommandI(unittest.TestCase):
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
         FS.delete_all()
-        print('...creating new CLI object: ', end='')
+        print('...creating new Place object: ', end='')
         TestHBNBCommandI.cli.do_create('Place '
                                        'city_id="0001" '
                                        'user_id="0001" '
@@ -155,7 +165,7 @@ class TestHBNBCommandErr(unittest.TestCase):
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
         FS.delete_all()
-        print('...creating new CLI object: ', end='')
+        print('...creating new Place object: ', end='')
         TestHBNBCommandErr.cli.do_create('Place '
                                          'city_id="00""""01" '
                                          'user_id="00_01" '

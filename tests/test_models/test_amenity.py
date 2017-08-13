@@ -6,6 +6,7 @@ import unittest
 from datetime import datetime
 import models
 import json
+import inspect
 
 Amenity = models.amenity.Amenity
 BaseModel = models.base_model.BaseModel
@@ -13,6 +14,8 @@ BaseModel = models.base_model.BaseModel
 
 class TestAmenityDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
+
+    all_funcs = inspect.getmembers(Amenity, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -33,11 +36,11 @@ class TestAmenityDocs(unittest.TestCase):
         actual = Amenity.__doc__
         self.assertEqual(expected, actual)
 
-    def test_doc_init(self):
-        """... documentation for init function"""
-        expected = 'instantiates a new amenity'
-        actual = Amenity.__init__.__doc__
-        self.assertEqual(expected, actual)
+    def test_all_function_docs(self):
+        """... tests for ALL DOCS for all functions in amenity file"""
+        AF = TestAmenityDocs.all_funcs
+        for f in AF:
+            self.assertTrue(len(f[1].__doc__) > 1)
 
 
 class TestAmenityInstances(unittest.TestCase):

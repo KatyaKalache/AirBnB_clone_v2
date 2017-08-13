@@ -6,6 +6,7 @@ import unittest
 from datetime import datetime
 import models
 import json
+import inspect
 
 Place = models.place.Place
 BaseModel = models.base_model.BaseModel
@@ -13,6 +14,8 @@ BaseModel = models.base_model.BaseModel
 
 class TestPlaceDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
+
+    all_funcs = inspect.getmembers(Place, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -33,11 +36,11 @@ class TestPlaceDocs(unittest.TestCase):
         actual = Place.__doc__
         self.assertEqual(expected, actual)
 
-    def test_doc_init(self):
-        """... documentation for init function"""
-        expected = 'instantiates a new place'
-        actual = Place.__init__.__doc__
-        self.assertEqual(expected, actual)
+    def test_all_function_docs(self):
+        """... tests for ALL DOCS for all functions in place file"""
+        AF = TestPlaceDocs.all_funcs
+        for f in AF:
+            self.assertTrue(len(f[1].__doc__) > 1)
 
 
 class TestPlaceInstances(unittest.TestCase):
