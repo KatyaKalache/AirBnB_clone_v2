@@ -98,6 +98,7 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def __isfloat(self, val):
+        """checks if a string may be converted to a float"""
         try:
             float(val)
             return True
@@ -105,6 +106,8 @@ class HBNBCommand(cmd.Cmd):
             return False
 
     def __update_val(self, v):
+        """updates string to proper type, either int, float, or
+        string with proper spaces and " symbols"""
         if v[0] == '"':
             v = v[1:]
         if v[-1] == '"':
@@ -112,8 +115,9 @@ class HBNBCommand(cmd.Cmd):
         v = v.replace('"', '\"')
         v = v.replace('_', ' ')
         if v.isdigit():
-            v = int(v)
-        if self.__isfloat(v):
+            if len(v) == len(str(int(v))):
+                v = int(v)
+        elif self.__isfloat(v):
             v = float(v)
         return v
 
@@ -121,9 +125,9 @@ class HBNBCommand(cmd.Cmd):
         """creates dictionary from input paramaters of create() function"""
         for s in arg:
             if '=' in s:
-                temp = s.split('=')
-                k = temp[0]
-                v = temp[1]
+                i = s.index('=')
+                k = s[:i]
+                v = s[(i + 1):]
                 v = self.__update_val(v)
                 d[k] = v
         return d
