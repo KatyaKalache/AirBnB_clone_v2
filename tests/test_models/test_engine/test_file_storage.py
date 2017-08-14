@@ -60,8 +60,9 @@ class TestBmFsInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new storage object for testing"""
-        self.storage = FileStorage()
         self.bm_obj = BaseModel()
+        self.bm_obj.save()
+        self.storage = FileStorage()
 
     def test_instantiation(self):
         """... checks proper FileStorage instantiation"""
@@ -149,7 +150,10 @@ class TestUserFsInstances(unittest.TestCase):
     def setUp(self):
         """initializes new user for testing"""
         self.user = User()
+        self.user.save()
         self.bm_obj = BaseModel()
+        self.bm_obj.save()
+        self.storage = FileStorage()
 
     def test_storage_file_exists(self):
         """... checks proper FileStorage instantiation"""
@@ -160,7 +164,7 @@ class TestUserFsInstances(unittest.TestCase):
     def test_all(self):
         """... checks if all() function returns newly created instance"""
         u_id = self.user.id
-        all_obj = storage.all()
+        all_obj = self.storage.all()
         actual = 0
         for k in all_obj.keys():
             if u_id in k:

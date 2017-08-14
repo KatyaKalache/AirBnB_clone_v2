@@ -6,14 +6,23 @@ BaseModel Class of Models Module
 import json
 import models
 from uuid import uuid4, UUID
-from datetime import datetime
+import datetime
+from sqlalchemy import String, Integer, Column, DateTime
+from sqlalchemy.ext.declarative import declarative_base
 
+
+datetime = datetime.datetime
 now = datetime.now
 strptime = datetime.strptime
+Base = declarative_base()
 
 
 class BaseModel:
     """attributes and functions for BaseModel class"""
+
+    id = Column(String(60), unique=True, primary_key=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
     def __init__(self, *args, **kwargs):
         """instantiation of new BaseModel Class"""
@@ -22,7 +31,6 @@ class BaseModel:
         else:
             self.id = str(uuid4())
             self.created_at = now()
-            models.storage.new(self)
 
     def __set_attributes(self, d):
         """converts kwargs values to python class attributes"""
@@ -37,9 +45,8 @@ class BaseModel:
                 d['updated_at'] = strptime(d['updated_at'],
                                            "%Y-%m-%d %H:%M:%S.%f")
         if '__class__' in d:
-            d.pop('__class__')
+            del d['__class__']
         self.__dict__ = d
-        models.storage.new(self)
 
     def __is_serializable(self, obj_v):
         """checks if object is serializable"""
@@ -57,6 +64,7 @@ class BaseModel:
     def save(self):
         """updates attribute updated_at to current time"""
         self.updated_at = now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_json(self):
@@ -68,9 +76,15 @@ class BaseModel:
             else:
                 bm_dict[k] = str(v)
         bm_dict["__class__"] = type(self).__name__
+        if "_sa_instance_state" in bm_dict:
+            del bm_dict["_sa_instance_state"]
         return(bm_dict)
 
     def __str__(self):
         """returns string type representation of object instance"""
         cname = type(self).__name__
         return "[{}] ({}) {}".format(cname, self.id, self.__dict__)
+
+    def delete(self):
+        """deletes the current instance from the storage"""
+        pass
