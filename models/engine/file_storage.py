@@ -61,5 +61,6 @@ class FileStorage:
 
     def delete_all(self):
         """deletes all stored objects, for testing purposes"""
+        del FileStorage.__objects
         FileStorage.__objects = {}
         self.save()
