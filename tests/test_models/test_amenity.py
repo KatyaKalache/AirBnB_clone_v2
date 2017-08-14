@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-Amenity = models.amenity.Amenity
-BaseModel = models.base_model.BaseModel
+Amenity = models.Amenity
+BaseModel = models.BaseModel
 
 
 class TestAmenityDocs(unittest.TestCase):

@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-State = models.state.State
-BaseModel = models.base_model.BaseModel
+State = models.State
+BaseModel = models.BaseModel
 
 
 class TestStateDocs(unittest.TestCase):

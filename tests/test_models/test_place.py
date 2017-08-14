@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-Place = models.place.Place
-BaseModel = models.base_model.BaseModel
+Place = models.Place
+BaseModel = models.BaseModel
 
 
 class TestPlaceDocs(unittest.TestCase):

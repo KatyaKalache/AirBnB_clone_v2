@@ -7,15 +7,35 @@ import models
 from datetime import datetime
 import console
 import inspect
+from contextlib import contextmanager
+from io import StringIO
+import sys
 
-Place = models.place.Place
-State = models.state.State
-User = models.user.User
+Place = models.Place
+State = models.State
+User = models.User
+
 HBNBCommand = console.HBNBCommand
 FS = console.FS
+CNC = models.CNC
 
 
-class TestHBNBCommandDocs(unittest.TestCase):
+@contextmanager
+def redirect_streams():
+    """function redirects streams: stdout & stderr for testing purposes
+    first creates StringIO obj, then saves / updates stdout & stderr"""
+    new_stdout, new_stderr = StringIO(), StringIO()
+    old_stdout, sys.stdout = sys.stdout, new_stdout
+    old_stderr, sys.stderr = sys.stderr, new_stderr
+    try:
+        # returns new file streams
+        yield new_stdout, new_stderr
+    finally:
+        # restore std streams to the previous value
+        sys.stdout, sys.stderr = old_stdout, old_stderr
+
+
+class TestHBNBcmdDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
 
     all_funcs = inspect.getmembers(console.HBNBCommand, inspect.isfunction)
@@ -42,17 +62,16 @@ class TestHBNBCommandDocs(unittest.TestCase):
 
     def test_all_function_docs(self):
         """... tests for ALL DOCS for all functions in console file"""
-        AF = TestHBNBCommandDocs.all_funcs
+        AF = TestHBNBcmdDocs.all_funcs
         for f in AF:
             if "_HBNBCommand_" in f[0]:
                 self.assertTrue(len(f[1].__doc__) > 1)
 
 
-class TestHBNBCommandI(unittest.TestCase):
+class TestHBNBcmdCreate(unittest.TestCase):
     """testing instantiation of CLI & create() function"""
 
     cli = HBNBCommand()
-    obj = None
 
     @classmethod
     def setUpClass(cls):
@@ -63,7 +82,7 @@ class TestHBNBCommandI(unittest.TestCase):
         print('.................................\n\n')
         FS.delete_all()
         print('...creating new Place object: ', end='')
-        CLI = TestHBNBCommandI.cli
+        CLI = TestHBNBcmdCreate.cli
         CLI.do_create('Place '
                       'city_id="0001" '
                       'user_id="0001" '
@@ -77,20 +96,20 @@ class TestHBNBCommandI(unittest.TestCase):
         print('')
         fs_o = FS.all()
         for v in fs_o.values():
-            TestHBNBCommandI.obj = v
+            TestHBNBcmdCreate.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
-        self.CLI = TestHBNBCommandI.cli
-        self.obj = TestHBNBCommandI.obj
+        self.CLI = TestHBNBcmdCreate.cli
+        self.obj = TestHBNBcmdCreate.obj
 
     def test_instantiation(self):
-        """... checks if HBNBCommand is properly instantiated"""
+        """... checks if HBNBCommand CLI Object is properly instantiated"""
         self.assertIsInstance(self.CLI, HBNBCommand)
 
     def test_create(self):
         """... tests creation of class City with attributes"""
-        self.assertIsInstance(self.obj, Place)
+        self.assertIsInstance(self.obj, CNC['Place'])
 
     def test_attr_user_id(self):
         """... checks if proper parameter for user_id was created"""
@@ -153,12 +172,10 @@ class TestHBNBCommandI(unittest.TestCase):
         self.assertIs(type(actual), float)
 
 
-class TestHBNBCommandErr(unittest.TestCase):
-    """tests instantiation of CLI and create() function
-    These tests attempt to throw errors"""
+class TestHBNBcmdErr(unittest.TestCase):
+    """Tests create method -> attempts to throw errors with strange params"""
 
     cli = HBNBCommand()
-    obj = None
 
     @classmethod
     def setUpClass(cls):
@@ -169,7 +186,7 @@ class TestHBNBCommandErr(unittest.TestCase):
         print('.................................\n\n')
         FS.delete_all()
         print('...creating new Place object: ', end='')
-        CLI = TestHBNBCommandErr.cli
+        CLI = TestHBNBcmdErr.cli
         CLI.do_create('Place '
                       'city_id="00""""01" '
                       'user_id="00_01" '
@@ -180,20 +197,16 @@ class TestHBNBCommandErr(unittest.TestCase):
         print('')
         fs_o = FS.all()
         for v in fs_o.values():
-            TestHBNBCommandErr.obj = v
+            TestHBNBcmdErr.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
-        self.CLI = TestHBNBCommandErr.cli
-        self.obj = TestHBNBCommandErr.obj
-
-    def test_instantiation(self):
-        """... checks if HBNBCommand is properly instantiated"""
-        self.assertIsInstance(self.CLI, HBNBCommand)
+        self.CLI = TestHBNBcmdErr.cli
+        self.obj = TestHBNBcmdErr.obj
 
     def test_create(self):
         """... tests creation of class City with attributes"""
-        self.assertIsInstance(self.obj, Place)
+        self.assertIsInstance(self.obj, CNC['Place'])
 
     def test_attr_user_id(self):
         """... checks if proper parameter for user_id was created"""
@@ -233,11 +246,10 @@ class TestHBNBCommandErr(unittest.TestCase):
         self.assertEqual(expected, actual)
 
 
-class TestHBNBCommandfunc(unittest.TestCase):
-    """Test instantiation of CLI with tests for all other functions"""
+class TestHBNBcmdFunc(unittest.TestCase):
+    """Test CLI for create, update, destroy Standard Notation"""
 
     cli = HBNBCommand()
-    obj = None
 
     @classmethod
     def setUpClass(cls):
@@ -248,24 +260,20 @@ class TestHBNBCommandfunc(unittest.TestCase):
         print('.................................\n\n')
         FS.delete_all()
         print('...creating new State object: ', end='')
-        TestHBNBCommandfunc.cli.do_create('State')
+        TestHBNBcmdFunc.cli.do_create('State')
         print('')
         fs_o = FS.all()
         for v in fs_o.values():
-            TestHBNBCommandfunc.obj = v
+            TestHBNBcmdFunc.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
-        self.CLI = TestHBNBCommandfunc.cli
-        self.obj = TestHBNBCommandfunc.obj
-
-    def test_instantiation(self):
-        """... checks if HBNBCommand is properly instantiated"""
-        self.assertIsInstance(self.CLI, HBNBCommand)
+        self.CLI = TestHBNBcmdFunc.cli
+        self.obj = TestHBNBcmdFunc.obj
 
     def test_create(self):
         """... tests creation of class City with attributes"""
-        self.assertIsInstance(self.obj, State)
+        self.assertIsInstance(self.obj, CNC['State'])
 
     def test_attr_name(self):
         """... checks if proper parameter for name was created"""
@@ -284,8 +292,8 @@ class TestHBNBCommandfunc(unittest.TestCase):
             self.assertIsNone(None)
 
 
-class TestHBNBCommandfunc2(unittest.TestCase):
-    """Test instantiation of CLI with tests for .function() notation"""
+class TestHBNBcmdDotNotation(unittest.TestCase):
+    """Tests for .function() notation for: .create(), .update(), .destroy()"""
 
     cli = HBNBCommand()
     obj = None
@@ -294,32 +302,28 @@ class TestHBNBCommandfunc2(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
-        print('\n\n.................................')
-        print('... Tests .function() noation ...')
-        print('..... For HBNBCommand Class .....')
-        print('.................................\n\n')
+        print('\n\n..................................')
+        print('... Tests .function() notation ....')
+        print('..... For HBNBCommand Class ......')
+        print('..................................\n\n')
         FS.delete_all()
         print('...creating new User object: ', end='')
-        TestHBNBCommandfunc2.cli.do_User('.create()')
+        TestHBNBcmdDotNotation.cli.do_User('.create()')
         print('...creating new User object: ', end='')
-        TestHBNBCommandfunc2.cli.do_User('.create()')
+        TestHBNBcmdDotNotation.cli.do_User('.create()')
         print('')
         fs_o = FS.all()
         for v in fs_o.values():
-            if not TestHBNBCommandfunc2.obj:
-                TestHBNBCommandfunc2.obj = v
+            if not TestHBNBcmdDotNotation.obj:
+                TestHBNBcmdDotNotation.obj = v
             else:
-                TestHBNBCommandfunc2.obj2 = v
+                TestHBNBcmdDotNotation.obj2 = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
-        self.CLI = TestHBNBCommandfunc2.cli
-        self.obj = TestHBNBCommandfunc2.obj
-        self.obj2 = TestHBNBCommandfunc2.obj2
-
-    def test_instantiation(self):
-        """... checks if HBNBCommand is properly instantiated"""
-        self.assertIsInstance(self.CLI, HBNBCommand)
+        self.CLI = TestHBNBcmdDotNotation.cli
+        self.obj = TestHBNBcmdDotNotation.obj
+        self.obj2 = TestHBNBcmdDotNotation.obj2
 
     def test_create(self):
         """... tests creation of class User with attributes"""
@@ -362,6 +366,225 @@ class TestHBNBCommandfunc2(unittest.TestCase):
         except:
             self.assertIsNone(None)
 
+
+class TestHBNBcmdCount(unittest.TestCase):
+    """Tests .count() method for all Classes"""
+
+    cli = HBNBCommand()
+
+    @classmethod
+    def setUpClass(cls):
+        """init: prints output to mark new tests
+        This setup creates an instance of each class"""
+        print('\n\n.................................')
+        print('..           .count()          ..')
+        print('..... Tests for all classes .....')
+        print('..... For HBNBCommand Class .....')
+        print('.................................\n\n')
+        FS.delete_all()
+        CLI = TestHBNBcmdCount.cli
+        for k in CNC.keys():
+            print('...creating new {} object: '.format(k), end='')
+            CLI.do_create(k)
+        print('')
+        TestHBNBcmdCount.fs_o = FS.all()
+
+    def setUp(self):
+        """initializes new HBNBCommand instance and FS obj for each test"""
+        self.CLI = TestHBNBcmdCount.cli
+        self.FS_O = TestHBNBcmdCount.fs_o
+
+    def test_create_all(self):
+        """... tests creation of 1 instance of all classes"""
+        check1 = set(v_class for v_class in CNC.values())
+        check2 = set(type(v_obj) for v_obj in self.FS_O.values())
+        self.assertEqual(check1, check2)
+
+    def test_count_BM(self):
+        """... tests .count() method for BaseModel Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_BaseModel('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_amenity(self):
+        """... tests .count() method for Amenity Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Amenity('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_city(self):
+        """... tests .count() method for City Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_City('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_state(self):
+        """... tests .count() method for State Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_State('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_user(self):
+        """... tests .count() method for User Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_User('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_review(self):
+        """... tests .count() method for Review Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Review('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+    def test_count_place(self):
+        """... tests .count() method for Place Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Place('.count()')
+        expected = '1\n'
+        actual = std_out.getvalue()
+        self.assertEqual(expected, actual)
+
+
+class TestHBNBcmdAll(unittest.TestCase):
+    """Tests .all() method for all Classes"""
+
+    cli = HBNBCommand()
+
+    @classmethod
+    def setUpClass(cls):
+        """init: prints output to mark new tests
+        This setup creates an instance of each class"""
+        print('\n\n.................................')
+        print('..            .all()           ..')
+        print('..... Tests for all classes .....')
+        print('..... For HBNBCommand Class .....')
+        print('.................................\n\n')
+        FS.delete_all()
+        CLI = TestHBNBcmdAll.cli
+        for k in CNC.keys():
+            print('...creating new {} object: '.format(k), end='')
+            CLI.do_create(k)
+        print('')
+        TestHBNBcmdAll.fs_o = FS.all()
+        TestHBNBcmdAll.all_ids = list(v.id for v in
+                                      TestHBNBcmdAll.fs_o.values())
+
+    def setUp(self):
+        """initializes new HBNBCommand instance and FS obj for each test"""
+        self.CLI = TestHBNBcmdAll.cli
+        self.FS_O = TestHBNBcmdAll.fs_o
+        self.all_ids = TestHBNBcmdAll.all_ids
+
+    def test_all_BM(self):
+        """... tests .all() method for BaseModel Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_BaseModel('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_amenity(self):
+        """... tests .all() method for Amenity Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Amenity('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_city(self):
+        """... tests .all() method for City Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_City('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_state(self):
+        """... tests .all() method for State Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_State('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_user(self):
+        """... tests .all() method for User Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_User('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_review(self):
+        """... tests .all() method for Review Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Review('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+    def test_all_place(self):
+        """... tests .all() method for Place Class"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.do_Place('.all()')
+        actual = std_out.getvalue()
+        found = False
+        for an_id in self.all_ids:
+            if an_id in actual:
+                found = True
+        self.assertTrue(found)
+
+
+class TestHBNBcmdQuit(unittest.TestCase):
+    """Tests Quit"""
+
+    @classmethod
+    def setUpClass(cls):
+        """init: prints output to mark new tests
+        This simply tests quit"""
+        print('\n\n.................................')
+        print('........ Tests quit CLI .........')
+        print('..... For HBNBCommand Class .....')
+        print('.................................\n\n')
+
+    def setUp(self):
+        """initializes new HBNBCommand instance and FS obj for each test"""
+        self.CLI = HBNBCommand()
+
+    def test_quit_cli(self):
+        """... tests 'quit' command from CLI, should quit and return True"""
+        FS.delete_all()
+        self.assertTrue(self.CLI.do_quit(self.CLI))
 
 if __name__ == '__main__':
     unittest.main

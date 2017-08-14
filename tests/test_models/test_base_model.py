@@ -8,7 +8,7 @@ import models
 import json
 import inspect
 
-BaseModel = models.base_model.BaseModel
+BaseModel = models.BaseModel
 
 
 class TestBaseModelDocs(unittest.TestCase):

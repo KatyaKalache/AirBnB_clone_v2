@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-City = models.city.City
-BaseModel = models.base_model.BaseModel
+City = models.City
+BaseModel = models.BaseModel
 
 
 class TestCityDocs(unittest.TestCase):

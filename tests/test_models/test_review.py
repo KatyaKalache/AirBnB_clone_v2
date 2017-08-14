@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-Review = models.review.Review
-BaseModel = models.base_model.BaseModel
+Review = models.Review
+BaseModel = models.BaseModel
 
 
 class TestReviewDocs(unittest.TestCase):

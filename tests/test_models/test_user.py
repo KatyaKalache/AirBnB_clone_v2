@@ -8,8 +8,8 @@ import models
 import json
 import inspect
 
-User = models.user.User
-BaseModel = models.base_model.BaseModel
+User = models.User
+BaseModel = models.BaseModel
 
 
 class TestUserDocs(unittest.TestCase):
