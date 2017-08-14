@@ -492,77 +492,49 @@ class TestHBNBcmdAll(unittest.TestCase):
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_BaseModel('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_amenity(self):
         """... tests .all() method for Amenity Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_Amenity('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_city(self):
         """... tests .all() method for City Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_City('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_state(self):
         """... tests .all() method for State Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_State('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_user(self):
         """... tests .all() method for User Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_User('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_review(self):
         """... tests .all() method for Review Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_Review('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
     def test_all_place(self):
         """... tests .all() method for Place Class"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.do_Place('.all()')
         actual = std_out.getvalue()
-        found = False
-        for an_id in self.all_ids:
-            if an_id in actual:
-                found = True
-        self.assertTrue(found)
+        self.assertFalse(all(an_id not in actual for an_id in self.all_ids))
 
 
 class TestHBNBcmdQuit(unittest.TestCase):
