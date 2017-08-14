@@ -4,12 +4,9 @@ Command interpreter for Holberton AirBnB project
 """
 import cmd
 from models import base_model, user, storage, CNC
-
 BaseModel = base_model.BaseModel
 User = user.User
 FS = storage
-
-
 class HBNBCommand(cmd.Cmd):
     """Command inerpreter class"""
     prompt = '(hbnb) '
