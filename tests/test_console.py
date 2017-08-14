@@ -567,14 +567,17 @@ class TestHBNBcmdQuit(unittest.TestCase):
         with redirect_streams() as (std_out, std_err):
             self.CLI.default('')
         actual = std_out.getvalue()
-        self.assertIs(actual, '')
+        expected = 'This "" is invalid, run "help" for more explanations\n'
+        self.assertEqual(expected, actual)
 
     def test_unknown_cli(self):
         """... tests unknown command should simply print '\n'"""
         with redirect_streams() as (std_out, std_err):
             self.CLI.default('giggly goop magrouple')
         actual = std_out.getvalue()
-        self.assertIs(actual, '')
+        expected = ('This "giggly goop magrouple" is invalid, run "help" '
+                    'for more explanations\n')
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':
