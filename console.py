@@ -4,9 +4,12 @@ Command interpreter for Holberton AirBnB project
 """
 import cmd
 from models import base_model, user, storage, CNC
+
 BaseModel = base_model.BaseModel
 User = user.User
 FS = storage
+
+
 class HBNBCommand(cmd.Cmd):
     """Command inerpreter class"""
     prompt = '(hbnb) '
@@ -35,7 +38,8 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         """default response for unknown commands"""
-        pass
+        print("This \"{}\" is invalid, run \"help\" "
+              "for more explanations".format(line))
 
     def emptyline(self):
         """Called when an empty line is entered in response to the prompt."""
@@ -72,6 +76,7 @@ class HBNBCommand(cmd.Cmd):
     def do_airbnb(self, arg):
         """airbnb: airbnb
         SYNOPSIS: Command changes prompt string"""
+        print("{} type {} split {}".format(arg, type(arg), arg.split()))
         print("                      __ ___                        ")
         print("    _     _  _ _||\ |/  \ | _  _  _|_|_     _  _ _| ")
         print("|_||_)\)/(_|| (_|| \|\__/ || )(_)| |_| )\)/(_|| (_| ")
@@ -105,15 +110,13 @@ class HBNBCommand(cmd.Cmd):
     def __update_val(self, v):
         """updates string to proper type, either int, float, or
         string with proper spaces and " symbols"""
-        if v[0] == '"':
-            v = v[1:]
-        if v[-1] == '"':
-            v = v[0:-1]
-        v = v.replace('"', '\"')
-        v = v.replace('_', ' ')
+        if v[0] == '"' and v[-1] == '"':
+            v = v[1:-1]
+            v = v.replace('"', '\"')
+            v = v.replace('_', ' ')
+            return v
         if v.isdigit():
-            if len(v) == len(str(int(v))):
-                v = int(v)
+            v = int(v)
         elif self.__isfloat(v):
             v = float(v)
         return v
@@ -142,14 +145,16 @@ class HBNBCommand(cmd.Cmd):
         arg = arg.split()
         error = self.__class_err(arg)
         if not error:
-            for k, v in CNC.items():
-                if k == arg[0]:
-                    d = {}
-                    if len(arg) > 1:
-                        d = self.create_dict(d, arg[1:])
-                    my_obj = (v(**d) if d else v())
-                    my_obj.save()
-                    print(my_obj.id)
+            k = arg[0]
+            if k in CNC:
+                class_obj = CNC[k]
+                if len(arg) > 1:
+                    d = self.create_dict({}, arg[1:])
+                    my_obj = class_obj(**d)
+                else:
+                    my_obj = class_obj()
+                my_obj.save()
+                print(my_obj.id)
 
     def do_show(self, arg):
         """show: show [ARG] [ARG1]
