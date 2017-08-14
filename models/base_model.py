@@ -9,7 +9,7 @@ from uuid import uuid4, UUID
 import datetime
 from sqlalchemy import String, Integer, Column, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-
+from sqlalchemy.orm import relationship
 
 datetime = datetime.datetime
 now = datetime.now
