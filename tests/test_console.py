@@ -566,14 +566,14 @@ class TestHBNBcmdAll(unittest.TestCase):
 
 
 class TestHBNBcmdQuit(unittest.TestCase):
-    """Tests Quit"""
+    """Tests Quit, EOF, and unknown input / RTN [Enter] button"""
 
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests
         This simply tests quit"""
         print('\n\n.................................')
-        print('........ Tests quit CLI .........')
+        print('.... quit, EOF & newline CLI ....')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
 
@@ -585,6 +585,25 @@ class TestHBNBcmdQuit(unittest.TestCase):
         """... tests 'quit' command from CLI, should quit and return True"""
         FS.delete_all()
         self.assertTrue(self.CLI.do_quit(self.CLI))
+
+    def test_eof_cli(self):
+        """... tests EOF  command from CLI, should quit and return True"""
+        self.assertTrue(self.CLI.do_EOF(self.CLI))
+
+    def test_carriage_return_cli(self):
+        """... tests carriage return should simply print '\n'"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.default('')
+        actual = std_out.getvalue()
+        self.assertIs(actual, '')
+
+    def test_unknown_cli(self):
+        """... tests unknown command should simply print '\n'"""
+        with redirect_streams() as (std_out, std_err):
+            self.CLI.default('giggly goop magrouple')
+        actual = std_out.getvalue()
+        self.assertIs(actual, '')
+
 
 if __name__ == '__main__':
     unittest.main
