@@ -8,7 +8,8 @@ import models
 from uuid import uuid4, UUID
 from os import environ
 import datetime
-from sqlalchemy import String, Integer, Column, DateTime, ForeignKey
+from sqlalchemy import String, Integer, Column, DateTime, ForeignKey, Table
+from sqlalchemy import Float, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 

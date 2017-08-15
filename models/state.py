@@ -4,15 +4,19 @@ State Class from Models Module
 """
 
 from os import environ
-from models.base_model import BaseModel, Base, Column, String
+from models.base_model import BaseModel, Base, Column, String, relationship
 
 
 class State(BaseModel, Base):
     """State class handles all application states"""
     __abstract__ = True
 
-    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'states'
+        name = Column(String(128), nullable=False)
+        cities = relationship('City',
+                              cascade='all, delete-orphan',
+                              backref='State')
     else:
         name = ''
 

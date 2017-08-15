@@ -12,7 +12,7 @@ class City(BaseModel, Base):
     """City class handles all application cities"""
     __abstract__ = True
 
-    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'cities'
         name = Column(String(128), nullable=False)
         state_id = Column(String(60),
@@ -20,7 +20,7 @@ class City(BaseModel, Base):
                           nullable=False)
         places = relationship('Place',
                               cascade='all, delete-orphan',
-                              backref='amenities')
+                              backref='cities')
     else:
         state_id = ''
         name = ''
