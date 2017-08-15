@@ -16,7 +16,7 @@ State = models.State
 User = models.User
 
 HBNBCommand = console.HBNBCommand
-FS = console.FS
+fs = console.fs
 CNC = models.CNC
 
 
@@ -80,7 +80,7 @@ class TestHBNBcmdCreate(unittest.TestCase):
         print('.... Test create() w/ params ....')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         print('...creating new Place object: ', end='')
         CLI = TestHBNBcmdCreate.cli
         CLI.do_create('Place '
@@ -94,8 +94,8 @@ class TestHBNBcmdCreate(unittest.TestCase):
                       'latitude=37.773972 '
                       'longitude=-122.431297')
         print('')
-        fs_o = FS.all()
-        for v in fs_o.values():
+        fs_objs = fs.all()
+        for v in fs_objs.values():
             TestHBNBcmdCreate.obj = v
 
     def setUp(self):
@@ -184,7 +184,7 @@ class TestHBNBcmdErr(unittest.TestCase):
         print('... Can I Kill your program ? ...')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         print('...creating new Place object: ', end='')
         CLI = TestHBNBcmdErr.cli
         CLI.do_create('Place '
@@ -195,8 +195,8 @@ class TestHBNBcmdErr(unittest.TestCase):
                       'number_bathrooms=2.0 '
                       'max_guest="\'\'"HEy-O"\'\'" ')
         print('')
-        fs_o = FS.all()
-        for v in fs_o.values():
+        fs_objs = fs.all()
+        for v in fs_objs.values():
             TestHBNBcmdErr.obj = v
 
     def setUp(self):
@@ -258,12 +258,12 @@ class TestHBNBcmdFunc(unittest.TestCase):
         print('.. Testing All other Functions ..')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         print('...creating new State object: ', end='')
         TestHBNBcmdFunc.cli.do_create('State')
         print('')
-        fs_o = FS.all()
-        for v in fs_o.values():
+        fs_objs = fs.all()
+        for v in fs_objs.values():
             TestHBNBcmdFunc.obj = v
 
     def setUp(self):
@@ -306,14 +306,14 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
         print('... Tests .function() notation ....')
         print('..... For HBNBCommand Class ......')
         print('..................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         print('...creating new User object: ', end='')
         TestHBNBcmdDotNotation.cli.do_User('.create()')
         print('...creating new User object: ', end='')
         TestHBNBcmdDotNotation.cli.do_User('.create()')
         print('')
-        fs_o = FS.all()
-        for v in fs_o.values():
+        fs_objs = fs.all()
+        for v in fs_objs.values():
             if not TestHBNBcmdDotNotation.obj:
                 TestHBNBcmdDotNotation.obj = v
             else:
@@ -381,23 +381,23 @@ class TestHBNBcmdCount(unittest.TestCase):
         print('..... Tests for all classes .....')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         CLI = TestHBNBcmdCount.cli
         for k in CNC.keys():
             print('...creating new {} object: '.format(k), end='')
             CLI.do_create(k)
         print('')
-        TestHBNBcmdCount.fs_o = FS.all()
+        TestHBNBcmdCount.fs_objs = fs.all()
 
     def setUp(self):
-        """initializes new HBNBCommand instance and FS obj for each test"""
+        """initializes new HBNBCommand instance and fs obj for each test"""
         self.CLI = TestHBNBcmdCount.cli
-        self.FS_O = TestHBNBcmdCount.fs_o
+        self.fs_objs = TestHBNBcmdCount.fs_objs
 
     def test_create_all(self):
         """... tests creation of 1 instance of all classes"""
         check1 = set(v_class for v_class in CNC.values())
-        check2 = set(type(v_obj) for v_obj in self.FS_O.values())
+        check2 = set(type(v_obj) for v_obj in self.fs_objs.values())
         self.assertEqual(check1, check2)
 
     def test_count_BM(self):
@@ -471,20 +471,20 @@ class TestHBNBcmdAll(unittest.TestCase):
         print('..... Tests for all classes .....')
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
-        FS.delete_all()
+        fs.delete_all()
         CLI = TestHBNBcmdAll.cli
         for k in CNC.keys():
             print('...creating new {} object: '.format(k), end='')
             CLI.do_create(k)
         print('')
-        TestHBNBcmdAll.fs_o = FS.all()
+        TestHBNBcmdAll.fs_objs = fs.all()
         TestHBNBcmdAll.all_ids = list(v.id for v in
-                                      TestHBNBcmdAll.fs_o.values())
+                                      TestHBNBcmdAll.fs_objs.values())
 
     def setUp(self):
-        """initializes new HBNBCommand instance and FS obj for each test"""
+        """initializes new HBNBCommand instance and fs obj for each test"""
         self.CLI = TestHBNBcmdAll.cli
-        self.FS_O = TestHBNBcmdAll.fs_o
+        self.fs_objs = TestHBNBcmdAll.fs_objs
         self.all_ids = TestHBNBcmdAll.all_ids
 
     def test_all_BM(self):
@@ -550,12 +550,12 @@ class TestHBNBcmdQuit(unittest.TestCase):
         print('.................................\n\n')
 
     def setUp(self):
-        """initializes new HBNBCommand instance and FS obj for each test"""
+        """initializes new HBNBCommand instance and fs obj for each test"""
         self.CLI = HBNBCommand()
 
     def test_quit_cli(self):
         """... tests 'quit' command from CLI, should quit and return True"""
-        FS.delete_all()
+        fs.delete_all()
         self.assertTrue(self.CLI.do_quit(self.CLI))
 
     def test_eof_cli(self):

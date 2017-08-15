@@ -28,14 +28,14 @@ class FileStorage:
     __file_path = './dev/file.json'
     __objects = {}
 
-    def all(self):
+    def all(self, cls=None):
         """returns private attribute: __objects"""
         return FileStorage.__objects
 
     def new(self, obj):
-        """sets / updates in __objects the obj with key <obj class name>.id"""
-        bm_id = "{}.{}".format(type(obj).__name__, obj.id)
-        FileStorage.__objects[bm_id] = obj
+        """sets / updates __objects: key = <Class>.id: val = the obj"""
+        obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+        FileStorage.__objects[obj_ref] = obj
 
     def save(self):
         """serializes __objects to the JSON file (path: __file_path)"""
@@ -58,6 +58,11 @@ class FileStorage:
         for o_id, d in new_objs.items():
             k_cls = d['__class__']
             FileStorage.__objects[o_id] = FileStorage.CNC[k_cls](**d)
+
+    def delete(self, obj=None):
+        """deletes just the input object from the __objects variable"""
+        obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+        del FileStorage.__objects[obj_ref]
 
     def delete_all(self):
         """deletes all stored objects, for testing purposes"""
