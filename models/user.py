@@ -4,12 +4,11 @@ User Class from Models Module
 """
 
 from os import environ
-from models.base_model import BaseModel, Base, Column, String
+from models.base_model import BaseModel, Base, Column, String, relationship
 
 
 class User(BaseModel, Base):
     """User class handles all application users"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'users'

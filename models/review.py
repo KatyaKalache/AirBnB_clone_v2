@@ -9,7 +9,6 @@ from models.base_model import BaseModel, Base, Column, String, ForeignKey
 
 class Review(BaseModel, Base):
     """Review class handles all application reviews"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'reviews'

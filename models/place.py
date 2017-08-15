@@ -4,13 +4,12 @@ Place Class from Models Module
 """
 
 from os import environ
-from models.base_model import BaseModel, Base, Column, String, Float, Table
-from models.base_model import MetaData
-
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String, Float, Table, ForeignKey
+from sqlalchemy.orm import relationship
 
 class Place(BaseModel, Base):
     """Place class handles all application places"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'places'

@@ -9,7 +9,6 @@ from models.base_model import BaseModel, Base, Column, String, relationship
 
 class Amenity(BaseModel, Base):
     """Amenity class handles all application amenities"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = "amenities"
