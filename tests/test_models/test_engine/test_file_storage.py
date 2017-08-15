@@ -12,7 +12,7 @@ import inspect
 User = models.user.User
 BaseModel = models.base_model.BaseModel
 FileStorage = models.file_storage.FileStorage
-FS = models.storage
+fs = models.storage
 F = './dev/file.json'
 
 
@@ -65,7 +65,7 @@ class TestBmFsInstances(unittest.TestCase):
 
     def test_instantiation(self):
         """... checks proper FileStorage instantiation"""
-        self.assertIsInstance(FS, FileStorage)
+        self.assertIsInstance(fs, FileStorage)
 
     def test_storage_file_exists(self):
         """... checks proper FileStorage instantiation"""
@@ -76,7 +76,7 @@ class TestBmFsInstances(unittest.TestCase):
     def test_all(self):
         """... checks if all() function returns newly created instance"""
         bm_id = self.bm_obj.id
-        all_obj = FS.all()
+        all_obj = fs.all()
         actual = 0
         for k in all_obj.keys():
             if bm_id in k:
@@ -162,7 +162,7 @@ class TestUserFsInstances(unittest.TestCase):
     def test_all(self):
         """... checks if all() function returns newly created instance"""
         u_id = self.user.id
-        all_obj = FS.all()
+        all_obj = fs.all()
         actual = 0
         for k in all_obj.keys():
             if u_id in k:

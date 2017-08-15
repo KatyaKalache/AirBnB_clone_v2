@@ -86,5 +86,5 @@ class BaseModel:
         return "[{}] ({}) {}".format(cname, self.id, self.__dict__)
 
     def delete(self):
-        """deletes the current instance from the storage"""
-        pass
+        """deletes the current instance from the storage __objects variable"""
+        models.storage.delete(self)
