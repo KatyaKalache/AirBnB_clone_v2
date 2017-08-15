@@ -3,12 +3,13 @@
 State Class from Models Module
 """
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base, Column, String
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """State class handles all application states"""
 
+    __tablename__ = 'states'
     name = ''
 
     def __init__(self, *args, **kwargs):

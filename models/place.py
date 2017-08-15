@@ -3,11 +3,13 @@
 Place Class from Models Module
 """
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base, Column, String
 
 
-class Place(BaseModel):
+class Place(BaseModel, Base):
     """Place class handles all application places"""
+
+    __tablename__ = 'places'
 
     city_id = ''
     user_id = ''

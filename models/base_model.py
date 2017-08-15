@@ -7,7 +7,7 @@ import json
 import models
 from uuid import uuid4, UUID
 import datetime
-from sqlalchemy import String, Integer, Column, DateTime
+from sqlalchemy import String, Integer, Column, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 

@@ -3,11 +3,13 @@
 Review Class from Models Module
 """
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base, Column, String
 
 
-class Review(BaseModel):
+class Review(BaseModel, Base):
     """Review class handles all application reviews"""
+
+    __tablename__ = 'reviews'
 
     place_id = ''
     user_id = ''
