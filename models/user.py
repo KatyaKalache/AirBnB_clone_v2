@@ -9,8 +9,9 @@ from models.base_model import BaseModel, Base, Column, String
 
 class User(BaseModel, Base):
     """User class handles all application users"""
+    __abstract__ = True
 
-    if environ['HBNB_TYPE_STORAGE'] == 'db':
+    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
         __tablename__ = 'users'
     else:
         email = ''

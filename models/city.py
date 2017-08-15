@@ -10,8 +10,9 @@ from os import environ
 
 class City(BaseModel, Base):
     """City class handles all application cities"""
+    __abstract__ = True
 
-    if environ['HBNB_TYPE_STORAGE'] == 'db':
+    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
         __tablename__ = 'cities'
         name = Column(String(128), nullable=False)
         state_id = Column(String(60),

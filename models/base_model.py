@@ -6,6 +6,7 @@ BaseModel Class of Models Module
 import json
 import models
 from uuid import uuid4, UUID
+from os import environ
 import datetime
 from sqlalchemy import String, Integer, Column, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -20,9 +21,18 @@ Base = declarative_base()
 class BaseModel:
     """attributes and functions for BaseModel class"""
 
-    id = Column(String(60), unique=True, primary_key=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
+    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+        id = Column(String(60), unique=True, primary_key=True, nullable=False)
+        created_at = Column(
+            DateTime,
+            default=datetime.utcnow(),
+            nullable=False
+        )
+        updated_at = Column(
+            DateTime,
+            default=datetime.utcnow(),
+            nullable=False
+        )
 
     def __init__(self, *args, **kwargs):
         """instantiation of new BaseModel Class"""

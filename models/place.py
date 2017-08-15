@@ -9,8 +9,9 @@ from models.base_model import BaseModel, Base, Column, String
 
 class Place(BaseModel, Base):
     """Place class handles all application places"""
+    __abstract__ = True
 
-    if environ['HBNB_TYPE_STORAGE'] == 'db':
+    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
         __tablename__ = 'places'
     else:
         city_id = ''
