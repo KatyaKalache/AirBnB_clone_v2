@@ -11,7 +11,7 @@ class Amenity(BaseModel, Base):
     """Amenity class handles all application amenities"""
     __abstract__ = True
 
-    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = "amenities"
         name = Column(String(128), nullable=False)
         place_amenities = relationship(

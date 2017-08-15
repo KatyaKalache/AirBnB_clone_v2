@@ -11,8 +11,18 @@ class User(BaseModel, Base):
     """User class handles all application users"""
     __abstract__ = True
 
-    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'users'
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128), nullable=False)
+        last_name = Column(String(128), nullable=False)
+        palce = relationship('Place',
+                             cascade='all, delete-orphan',
+                             backref='user')
+        reviews = relationship('Review',
+                               cascade='all, delete-orphan',
+                               backref='user')
     else:
         email = ''
         password = ''
