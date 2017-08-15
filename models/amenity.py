@@ -3,13 +3,15 @@
 Amenity Class from Models Module
 """
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base, Column, String
 
 
-class Amenity(BaseModel):
+class Amenity(BaseModel, Base):
     """Amenity class handles all application amenities"""
 
-    name = ''
+    name = Column(String(128), nullable=False)
+    __tablename__ = "amenities"
+#    place_amenities = relationship("PlaceAmenity", secondary="amenities")
 
     def __init__(self, *args, **kwargs):
         """instantiates a new amenity"""
