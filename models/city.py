@@ -4,13 +4,12 @@ City Class from Models Module
 """
 
 from models.base_model import BaseModel, Base, Column, String, ForeignKey
-from models.base_model import relationship
+from sqlalchemy.orm import relationship
 from os import environ
 
 
 class City(BaseModel, Base):
     """City class handles all application cities"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'cities'

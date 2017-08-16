@@ -9,7 +9,6 @@ from models.base_model import BaseModel, Base, Column, String, relationship
 
 class State(BaseModel, Base):
     """State class handles all application states"""
-    __abstract__ = True
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'states'

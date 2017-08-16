@@ -222,7 +222,7 @@ class HBNBCommand(cmd.Cmd):
             for k in fs_objs.keys():
                 if arg[1] in k and arg[0] in k:
                     to_delete = fs_objs[k]
-            del to_delete
+            to_delete.delete()
             fs.save()
 
     def __rremove(self, s, l):

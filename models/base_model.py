@@ -16,13 +16,17 @@ from sqlalchemy.orm import relationship
 datetime = datetime.datetime
 now = datetime.now
 strptime = datetime.strptime
-Base = declarative_base()
+
+if environ.get('HBNB_TYPE_STORAGE') == 'db':
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:
     """attributes and functions for BaseModel class"""
 
-    if 'HBNB_TYPE_STORAGE' in environ and environ['HBNB_TYPE_STORAGE'] == 'db':
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
         id = Column(String(60), unique=True, primary_key=True, nullable=False)
         created_at = Column(
             DateTime,
