@@ -4,22 +4,24 @@ Place Class from Models Module
 """
 
 from os import environ
-from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Float, Integer, Table, ForeignKey
-from sqlalchemy.orm import relationship
-"""
-if environ.get('HBNB_TYPE_STORAGE') == 'db':
-    place_amenity = Table("place_amenity", Base.metadata,
-                          Column("place_id",
-                                 ForeignKey("places.id"),
-                                 String(60),
-                                 nullable=False,
-                                 primary_key=True),
-                          Column("amenity_id", String(60),
-                                 ForeignKey("places.id"),
-                                 nullable=False,
-                                 primary_key=True))
-"""
+from models.base_model import BaseModel, Base, String, Column
+from sqlalchemy import Float, Integer, Table, ForeignKey
+from sqlalchemy.orm import relationship, backref
+
+
+class PlaceAmenity(Base):
+    """creates virtual table to connect tables for Place and Amenity"""
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = "place_amenity"
+        metadata = Base.metadata
+        place_id = Column(String(60),
+                          ForeignKey('places.id'),
+                          nullable=False,
+                          primary_key=True)
+        amenity_id = Column(String(60),
+                            ForeignKey('amenities.id'),
+                            nullable=False,
+                            primary_key=True)
 
 
 class Place(BaseModel, Base):

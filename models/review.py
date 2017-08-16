@@ -4,7 +4,8 @@ Review Class from Models Module
 """
 
 from os import environ
-from models.base_model import BaseModel, Base, Column, String, ForeignKey
+from models.base_model import BaseModel, Base, String, Column
+from sqlalchemy import ForeignKey
 
 
 class Review(BaseModel, Base):

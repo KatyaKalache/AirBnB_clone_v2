@@ -3,7 +3,8 @@
 City Class from Models Module
 """
 
-from models.base_model import BaseModel, Base, Column, String, ForeignKey
+from models.base_model import BaseModel, Base, String, Column
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from os import environ
 

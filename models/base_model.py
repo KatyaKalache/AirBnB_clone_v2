@@ -8,13 +8,12 @@ import models
 from uuid import uuid4, UUID
 from os import environ
 import datetime
-from sqlalchemy import String, Integer, Column, DateTime, ForeignKey, Table
-from sqlalchemy import Float, MetaData
+from sqlalchemy import String, Column, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 datetime = datetime.datetime
-now = datetime.now
+utcnow = datetime.utcnow
 strptime = datetime.strptime
 
 if environ.get('HBNB_TYPE_STORAGE') == 'db':
@@ -27,7 +26,10 @@ class BaseModel:
     """attributes and functions for BaseModel class"""
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
-        id = Column(String(60), unique=True, primary_key=True, nullable=False)
+        id = Column(String(60),
+                    unique=True,
+                    primary_key=True,
+                    nullable=False)
         created_at = Column(
             DateTime,
             default=datetime.utcnow(),
@@ -45,23 +47,27 @@ class BaseModel:
             self.__set_attributes(kwargs)
         else:
             self.id = str(uuid4())
-            self.created_at = now()
+            self.created_at = utcnow()
 
-    def __set_attributes(self, d):
+    def __set_attributes(self, kwargs):
         """converts kwargs values to python class attributes"""
-        if 'id' not in d:
-            d['id'] = str(uuid4())
-        if 'created_at' not in d:
-            d['created_at'] = now()
-        elif not isinstance(d['created_at'], datetime):
-            d['created_at'] = strptime(d['created_at'], "%Y-%m-%d %H:%M:%S.%f")
-        if 'updated_at' in d:
-            if not isinstance(d['updated_at'], datetime):
-                d['updated_at'] = strptime(d['updated_at'],
-                                           "%Y-%m-%d %H:%M:%S.%f")
-        if '__class__' in d:
-            del d['__class__']
-        self.__dict__ = d
+        if 'id' not in kwargs:
+            kwargs['id'] = str(uuid4())
+        if 'created_at' not in kwargs:
+            kwargs['created_at'] = utcnow()
+        elif not isinstance(kwargs['created_at'], datetime):
+            kwargs['created_at'] = strptime(kwargs['created_at'],
+                                            "%Y-%m-%d %H:%M:%S.%f")
+        if 'updated_at' not in kwargs:
+            kwargs['updated_at'] = utcnow()
+        if 'updated_at' in kwargs:
+            if not isinstance(kwargs['updated_at'], datetime):
+                kwargs['updated_at'] = strptime(kwargs['updated_at'],
+                                                "%Y-%m-%d %H:%M:%S.%f")
+        if environ.get('HBNB_TYPE_STORAGE') != 'db' and '__class__' in kwargs:
+            del kwargs['__class__']
+        for attr, val in kwargs.items():
+            setattr(self, attr, val)
 
     def __is_serializable(self, obj_v):
         """checks if object is serializable"""
@@ -78,7 +84,7 @@ class BaseModel:
 
     def save(self):
         """updates attribute updated_at to current time"""
-        self.updated_at = now()
+        self.updated_at = utcnow()
         models.storage.new(self)
         models.storage.save()
 
