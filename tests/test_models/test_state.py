@@ -47,6 +47,9 @@ class TestStateDocs(unittest.TestCase):
 class TestStateInstances(unittest.TestCase):
     """testing for class instances"""
 
+    state = State(**{"name": "California"})
+    state.save()
+
     @classmethod
     def setUpClass(cls):
         print('\n\n.................................')
@@ -56,7 +59,7 @@ class TestStateInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new state for testing"""
-        self.state = State(**{"name": "California"})
+        self.state = TestStateInstances.state
 
     def test_instantiation(self):
         """... checks if State is properly instantiated"""
@@ -71,17 +74,6 @@ class TestStateInstances(unittest.TestCase):
             if sub_str in my_str:
                 actual += 1
         self.assertTrue(3 == actual)
-
-    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
-                     "Test not yet prepared to handle DB Storage: "
-                     "Update Requred")
-    def test_instantiation_no_updated(self):
-        """... should not have updated attribute"""
-        my_str = str(self.state)
-        actual = 0
-        if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
 
     @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
                      "File Storage not initiated w/ updated_at")

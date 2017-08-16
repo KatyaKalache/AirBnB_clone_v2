@@ -48,6 +48,12 @@ class TestCityDocs(unittest.TestCase):
 class TestCityInstances(unittest.TestCase):
     """testing for class instances"""
 
+    state = State(**{"name": "California"})
+    state.save()
+    city = City(**{"state_id": "{}".format(state.id),
+                   "name": "SanFrancisco"})
+    city.save()
+
     @classmethod
     def setUpClass(cls):
         print('\n\n.................................')
@@ -57,9 +63,8 @@ class TestCityInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new city for testing"""
-        self.state = State(**{"name": "California"})
-        self.city = City(**{"state_id": "{}".format(self.state.id),
-                            "name": "SanFrancisco"})
+        self.state = TestCityInstances.state
+        self.city = TestCityInstances.city
 
     def test_instantiation(self):
         """... checks if City is properly instantiated"""
@@ -74,17 +79,6 @@ class TestCityInstances(unittest.TestCase):
             if sub_str in my_str:
                 actual += 1
         self.assertTrue(3 == actual)
-
-    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
-                     "DB Storage is initialized with updated at")
-    def test_instantiation_no_updated(self):
-        """... should not have updated attribute"""
-        self.city = City()
-        my_str = str(self.city)
-        actual = 0
-        if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
 
     @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
                      "DB Storage is initialized with updated at")

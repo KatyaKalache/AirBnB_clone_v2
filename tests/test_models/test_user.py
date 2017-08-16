@@ -44,11 +44,14 @@ class TestUserDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
-@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
-                 "Test not yet prepared to handle DB Storage: "
-                 "Update Requred")
 class TestUserInstances(unittest.TestCase):
     """testing for class instances"""
+
+    user = User(**{"email": "bettyholbertn@gmail.com",
+                   "password": "apass",
+                   "first_name": "a_name",
+                   "last_name": "a_last_name"})
+    user.save()
 
     @classmethod
     def setUpClass(cls):
@@ -59,14 +62,14 @@ class TestUserInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new user for testing"""
-        self.user = User()
+        self.user = TestUserInstances.user
 
     def test_instantiation(self):
         """... checks if User is properly instantiated"""
         self.assertIsInstance(self.user, User)
 
     def test_to_string(self):
-        """... checks if BaseModel is properly casted to string"""
+        """... checks if User is properly casted to string"""
         my_str = str(self.user)
         my_list = ['User', 'id', 'created_at']
         actual = 0
@@ -75,6 +78,8 @@ class TestUserInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                     "Only FS should have updated at")
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         self.user = User()
@@ -84,11 +89,12 @@ class TestUserInstances(unittest.TestCase):
             actual += 1
         self.assertTrue(0 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                     "Test only for DB Storage: ")
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.user.save()
         actual = type(self.user.updated_at)
-        expected = type(datetime.now())
+        expected = type(datetime.utcnow())
         self.assertEqual(expected, actual)
 
     def test_to_json(self):
@@ -112,7 +118,6 @@ class TestUserInstances(unittest.TestCase):
 
     def test_email_attribute(self):
         """... add email attribute"""
-        self.user.email = "bettyholbertn@gmail.com"
         if hasattr(self.user, 'email'):
             actual = self.user.email
         else:

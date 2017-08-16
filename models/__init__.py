@@ -13,9 +13,11 @@ from models.user import User
 if "HBNB_TYPE_STORAGE" in environ and environ["HBNB_TYPE_STORAGE"] == 'db':
     from models.engine import db_storage
     storage = db_storage.DBStorage()
+    CNC = db_storage.DBStorage.CNC
 else:
     storage = file_storage.FileStorage()
+    CNC = file_storage.FileStorage.CNC
+
 storage.reload()
 
 """CNC - dictionary = { Class Name (string) : Class Type }"""
-CNC = file_storage.FileStorage.CNC

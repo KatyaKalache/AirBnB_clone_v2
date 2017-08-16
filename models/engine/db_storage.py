@@ -25,7 +25,18 @@ class DBStorage:
 
     __engine = None
     __session = None
-    __classes = [Amenity, City, Place, Review, State, User]
+    CNC = {
+        'Amenity': Amenity,
+        'City': City,
+        'Place': Place,
+        'Review': Review,
+        'State': State,
+        'User': User
+    }
+    """CNC - this variable is a dictionary with:
+    keys: Class Names
+    values: Class type (used for instantiation)
+    """
 
     def __init__(self):
         """instantiation of mysql DB as python object"""
@@ -38,7 +49,7 @@ class DBStorage:
         """queries all objects in DB session depending on the class name"""
         d = {}
         if not cls:
-            for c in DBStorage.__classes:
+            for c in DBStorage.CNC.values():
                 a_query = self.__session.query(c)
                 for obj in a_query:
                     obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
@@ -72,7 +83,7 @@ class DBStorage:
 
     def delete_all(self):
         """deletes all stored objects, for testing purposes"""
-        for c in DBStorage.__classes:
+        for c in DBStorage.CNC.values():
             a_query = self.__session.query(c)
             all_objs = [obj for obj in a_query]
             for obj in range(len(all_objs)):
