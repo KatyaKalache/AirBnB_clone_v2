@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 Place = models.Place
 BaseModel = models.BaseModel
@@ -43,6 +44,9 @@ class TestPlaceDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "Place Tests are designed for File Storage only: "
+                 "Update Needed")
 class TestPlaceInstances(unittest.TestCase):
     """testing for class instances"""
 
