@@ -16,7 +16,11 @@ from sqlalchemy.orm import relationship
 datetime = datetime.datetime
 now = datetime.now
 strptime = datetime.strptime
-Base = declarative_base()
+
+if environ.get('HBNB_TYPE_STORAGE') == 'db':
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:

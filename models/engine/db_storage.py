@@ -5,12 +5,12 @@ mysql DB storage engine
 
 from os import environ
 from models import base_model, amenity, city, place, review, state, user
-from models.basemodel import Base, BaseModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models.file_storage import CNC
 
 Amenity = amenity.Amenity
+Base = base_model.Base
+BaseModel = base_model.BaseModel
 City = city.City
 Place = place.Place
 Review = review.Review
@@ -43,10 +43,13 @@ class DBStorage:
             for c in DBStorage.__classes:
                 a_query = self.__session.query(c)
                 for obj in a_query:
-                    d[obj.id] = obj
+                    obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                    d[obj_ref] = obj
         else:
             a_query = self.__session.query(cls)
-            d = {obj.id: obj for obj in a_query}
+            for obj in a_query:
+                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                d[obj_ref] = obj
         return d
 
     def new(self, obj):
@@ -58,13 +61,23 @@ class DBStorage:
         """commit all changes of the current DB session"""
         self.__session.commit()
 
-    def delete(self, obj=None):
-        """delete from the current DB session"""
-        if obj:
-            self.__session.delete(obj)
-
     def reload(self):
         """create all tables in DB & create current DB session from engine"""
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
+
+    def delete(self, obj=None):
+        """delete from the current DB session"""
+        if obj:
+            self.__session.delete(obj)
+
+    def delete_all(self):
+        """deletes all stored objects, for testing purposes"""
+        for c in DBStorage.__classes:
+            a_query = self.__session.query(c)
+            all_objs = [obj for obj in a_query]
+            for obj in range(len(all_objs)):
+                to_delete = all_objs.pop(0)
+                to_delete.delete()
+        self.save()
