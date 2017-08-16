@@ -32,12 +32,12 @@ class BaseModel:
                     nullable=False)
         created_at = Column(
             DateTime,
-            default=datetime.utcnow(),
+            default=utcnow(),
             nullable=False
         )
         updated_at = Column(
             DateTime,
-            default=datetime.utcnow(),
+            default=utcnow(),
             nullable=False
         )
 
