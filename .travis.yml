@@ -15,4 +15,4 @@ before_install:
 
 install: "pip install -r requirements.txt"
 
-script: ./dev/init_test.sh
+script: ./dev/travis_init_test.sh

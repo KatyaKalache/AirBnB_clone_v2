@@ -446,8 +446,8 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
 
     def test_attr_update(self):
         """... checks if proper parameter for name was created"""
-        self.CLI.do_State('.update("{}", "name", '
-                          '"Mongo")'.format(self.obj.id))
+        self.CLI.do_State('.update("{}", name, '
+                          'Mongo)'.format(self.obj.id))
         actual = self.obj.name
         expected = "Mongo"
         self.assertEqual(expected, actual)
