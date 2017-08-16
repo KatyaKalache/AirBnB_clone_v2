@@ -3,23 +3,29 @@
 Handles I/O, writing and reading, of JSON for storage of all class instances
 """
 import json
-from models import base_model, amenity, city, place, review, state, user
+from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 from datetime import datetime
 
 strptime = datetime.strptime
-to_json = base_model.BaseModel.to_json
+to_json = BaseModel.to_json
 
 
 class FileStorage:
     """handles long term storage of all class instances"""
     CNC = {
-        'BaseModel': base_model.BaseModel,
-        'Amenity': amenity.Amenity,
-        'City': city.City,
-        'Place': place.Place,
-        'Review': review.Review,
-        'State': state.State,
-        'User': user.User
+        'BaseModel': BaseModel,
+        'Amenity': Amenity,
+        'City': City,
+        'Place': Place,
+        'Review': Review,
+        'State': State,
+        'User': User
     }
     """CNC - this variable is a dictionary with:
     keys: Class Names

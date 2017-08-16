@@ -4,18 +4,16 @@ mysql DB storage engine
 """
 
 from os import environ
-from models import base_model, amenity, city, place, review, state, user
+from models.base_model import BaseModel, Base
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-Amenity = amenity.Amenity
-Base = base_model.Base
-BaseModel = base_model.BaseModel
-City = city.City
-Place = place.Place
-Review = review.Review
-State = state.State
-User = user.User
 hbuser = environ.get('HBNB_MYSQL_USER')
 hbpw = environ.get('HBNB_MYSQL_PWD')
 hbhost = environ.get('HBNB_MYSQL_HOST')

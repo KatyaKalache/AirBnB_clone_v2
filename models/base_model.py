@@ -13,7 +13,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 datetime = datetime.datetime
-now = datetime.now
+utcnow = datetime.utcnow
 strptime = datetime.strptime
 
 if environ.get('HBNB_TYPE_STORAGE') == 'db':
@@ -47,22 +47,24 @@ class BaseModel:
             self.__set_attributes(kwargs)
         else:
             self.id = str(uuid4())
-            self.created_at = now()
+            self.created_at = utcnow()
 
     def __set_attributes(self, kwargs):
         """converts kwargs values to python class attributes"""
         if 'id' not in kwargs:
             kwargs['id'] = str(uuid4())
         if 'created_at' not in kwargs:
-            kwargs['created_at'] = now()
+            kwargs['created_at'] = utcnow()
         elif not isinstance(kwargs['created_at'], datetime):
             kwargs['created_at'] = strptime(kwargs['created_at'],
                                             "%Y-%m-%d %H:%M:%S.%f")
+        if 'updated_at' not in kwargs:
+            kwargs['updated_at'] = utcnow()
         if 'updated_at' in kwargs:
             if not isinstance(kwargs['updated_at'], datetime):
                 kwargs['updated_at'] = strptime(kwargs['updated_at'],
                                                 "%Y-%m-%d %H:%M:%S.%f")
-        if '__class__' in kwargs:
+        if environ.get('HBNB_TYPE_STORAGE') != 'db' and '__class__' in kwargs:
             del kwargs['__class__']
         for attr, val in kwargs.items():
             setattr(self, attr, val)
@@ -82,7 +84,7 @@ class BaseModel:
 
     def save(self):
         """updates attribute updated_at to current time"""
-        self.updated_at = now()
+        self.updated_at = utcnow()
         models.storage.new(self)
         models.storage.save()
 

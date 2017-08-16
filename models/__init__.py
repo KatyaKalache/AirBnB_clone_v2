@@ -1,7 +1,13 @@
 #!/usr/bin/python3
 from models.engine import file_storage
-from models import base_model, amenity, city, place, review, state, user
 from os import environ
+from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
 """conditional to determine the storage engine type"""
 if "HBNB_TYPE_STORAGE" in environ and environ["HBNB_TYPE_STORAGE"] == 'db':
@@ -10,14 +16,6 @@ if "HBNB_TYPE_STORAGE" in environ and environ["HBNB_TYPE_STORAGE"] == 'db':
 else:
     storage = file_storage.FileStorage()
 storage.reload()
-
-Amenity = amenity.Amenity
-BaseModel = base_model.BaseModel
-City = city.City
-Place = place.Place
-Review = review.Review
-State = state.State
-User = user.User
 
 """CNC - dictionary = { Class Name (string) : Class Type }"""
 CNC = file_storage.FileStorage.CNC
