@@ -49,21 +49,23 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = now()
 
-    def __set_attributes(self, d):
+    def __set_attributes(self, kwargs):
         """converts kwargs values to python class attributes"""
-        if 'id' not in d:
-            d['id'] = str(uuid4())
-        if 'created_at' not in d:
-            d['created_at'] = now()
-        elif not isinstance(d['created_at'], datetime):
-            d['created_at'] = strptime(d['created_at'], "%Y-%m-%d %H:%M:%S.%f")
-        if 'updated_at' in d:
-            if not isinstance(d['updated_at'], datetime):
-                d['updated_at'] = strptime(d['updated_at'],
-                                           "%Y-%m-%d %H:%M:%S.%f")
-        if '__class__' in d:
-            del d['__class__']
-        self.__dict__ = d
+        if 'id' not in kwargs:
+            kwargs['id'] = str(uuid4())
+        if 'created_at' not in kwargs:
+            kwargs['created_at'] = now()
+        elif not isinstance(kwargs['created_at'], datetime):
+            kwargs['created_at'] = strptime(kwargs['created_at'],
+                                            "%Y-%m-%d %H:%M:%S.%f")
+        if 'updated_at' in kwargs:
+            if not isinstance(kwargs['updated_at'], datetime):
+                kwargs['updated_at'] = strptime(kwargs['updated_at'],
+                                                "%Y-%m-%d %H:%M:%S.%f")
+        if '__class__' in kwargs:
+            del kwargs['__class__']
+        for attr, val in kwargs.items():
+            setattr(self, attr, val)
 
     def __is_serializable(self, obj_v):
         """checks if object is serializable"""

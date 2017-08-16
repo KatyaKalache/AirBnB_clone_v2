@@ -7,7 +7,6 @@ from models import base_model, user, storage, CNC
 
 BaseModel = base_model.BaseModel
 User = user.User
-fs = storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -64,8 +63,8 @@ class HBNBCommand(cmd.Cmd):
             error += 1
             print(HBNBCommand.ERR[2])
         if not error:
-            fs_objs = fs.all()
-            for k, v in fs_objs.items():
+            storage_objs = storage.all()
+            for k, v in storage_objs.items():
                 temp_id = k.split('.')[1]
                 if temp_id == arg[1] and arg[0] in k:
                     return error
@@ -169,8 +168,8 @@ class HBNBCommand(cmd.Cmd):
         if not error:
             error += self.__id_err(arg)
         if not error:
-            fs_objs = fs.all()
-            for k, v in fs_objs.items():
+            storage_objs = storage.all()
+            for k, v in storage_objs.items():
                 if arg[1] in k and arg[0] in k:
                     print(v)
 
@@ -187,21 +186,21 @@ class HBNBCommand(cmd.Cmd):
             error = self.__class_err(arg)
         if not error:
             print('[', end='')
-            fs_objs = fs.all()
+            storage_objs = storage.all()
             l = 0
             if arg:
-                for v in fs_objs.values():
+                for v in storage_objs.values():
                     if type(v).__name__ == CNC[arg[0]].__name__:
                         l += 1
                 c = 0
-                for v in fs_objs.values():
+                for v in storage_objs.values():
                     if type(v).__name__ == CNC[arg[0]].__name__:
                         c += 1
                         print(v, end=(', ' if c < l else ''))
             else:
-                l = len(fs_objs)
+                l = len(storage_objs)
                 c = 0
-                for v in fs_objs.values():
+                for v in storage_objs.values():
                     print(v, end=(', ' if c < l else ''))
             print(']')
 
@@ -218,12 +217,12 @@ class HBNBCommand(cmd.Cmd):
         if not error:
             error += self.__id_err(arg)
         if not error:
-            fs_objs = fs.all()
-            for k in fs_objs.keys():
+            storage_objs = storage.all()
+            for k in storage_objs.keys():
                 if arg[1] in k and arg[0] in k:
-                    to_delete = fs_objs[k]
+                    to_delete = storage_objs[k]
             to_delete.delete()
-            fs.save()
+            storage.save()
 
     def __rremove(self, s, l):
         """removes characters in the input list from input string"""
@@ -256,8 +255,8 @@ class HBNBCommand(cmd.Cmd):
             error += self.__id_err(arg)
         if not error:
             valid_id = 0
-            fs_objs = fs.all()
-            for k in fs_objs.keys():
+            storage_objs = storage.all()
+            for k in storage_objs.keys():
                 if arg[1] in k and arg[0] in k:
                     key = k
             if len(arg) < 3:
@@ -265,7 +264,7 @@ class HBNBCommand(cmd.Cmd):
             elif len(arg) < 4:
                 print(HBNBCommand.ERR[5])
             else:
-                return [1, arg, d, fs_objs, key]
+                return [1, arg, d, storage_objs, key]
         return [0]
 
     def do_update(self, arg):
@@ -283,18 +282,18 @@ class HBNBCommand(cmd.Cmd):
         if arg_inv[0]:
             arg = arg_inv[1]
             d = arg_inv[2]
-            fs_objs = arg_inv[3]
+            storage_objs = arg_inv[3]
             key = arg_inv[4]
             if not d:
                 avalue = arg[3].strip('"')
                 if avalue.isdigit():
                     avalue = int(avalue)
-                fs_objs[key].bm_update(arg[2], avalue)
+                storage_objs[key].bm_update(arg[2], avalue)
             else:
                 for k, v in d.items():
                     if v.isdigit():
                         v = int(v)
-                    fs_objs[key].bm_update(k, v)
+                    storage_objs[key].bm_update(k, v)
 
     def do_BaseModel(self, arg):
         """class method with .function() syntax
@@ -334,9 +333,9 @@ class HBNBCommand(cmd.Cmd):
     def __count(self, arg):
         """counts the number objects in File Storage"""
         args = arg.split()
-        fs_objs = fs.all()
+        storage_objs = storage.all()
         count = 0
-        for k in fs_objs.keys():
+        for k in storage_objs.keys():
             if args[0] in k:
                 count += 1
         print(count)
