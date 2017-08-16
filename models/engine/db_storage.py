@@ -6,7 +6,7 @@ mysql DB storage engine
 from os import environ
 from models import base_model, amenity, city, place, review, state, user
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 Amenity = amenity.Amenity
 Base = base_model.Base
@@ -29,10 +29,13 @@ class DBStorage:
     __session = None
     __classes = [Amenity, BaseModel, City, Place, Review, State, User]
 
-    def init(self):
+    def __init__(self):
         """instantiation of mysql DB as python object"""
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
                                       .format(hbuser, hbpw, hbhost, hbdb))
+        Base.metadata.create_all(self.__engine)
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
         if environ.get('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -65,7 +68,7 @@ class DBStorage:
         """create all tables in DB & create current DB session from engine"""
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
-        self.__session = Session()
+        self.__session = scoped_session(Session)
 
     def delete(self, obj=None):
         """delete from the current DB session"""

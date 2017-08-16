@@ -8,8 +8,7 @@ import models
 from uuid import uuid4, UUID
 from os import environ
 import datetime
-from sqlalchemy import String, Integer, Column, DateTime, ForeignKey, Table
-from sqlalchemy import Float, MetaData
+from sqlalchemy import String, Column, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -27,7 +26,10 @@ class BaseModel:
     """attributes and functions for BaseModel class"""
 
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
-        id = Column(String(60), unique=True, primary_key=True, nullable=False)
+        id = Column(String(60),
+                    unique=True,
+                    primary_key=True,
+                    nullable=False)
         created_at = Column(
             DateTime,
             default=datetime.utcnow(),
