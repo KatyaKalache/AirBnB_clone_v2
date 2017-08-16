@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 State = models.State
 BaseModel = models.BaseModel
@@ -55,7 +56,7 @@ class TestStateInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new state for testing"""
-        self.state = State()
+        self.state = State(**{"name": "California"})
 
     def test_instantiation(self):
         """... checks if State is properly instantiated"""
@@ -71,6 +72,9 @@ class TestStateInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                     "Test not yet prepared to handle DB Storage: "
+                     "Update Requred")
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         my_str = str(self.state)
@@ -79,9 +83,10 @@ class TestStateInstances(unittest.TestCase):
             actual += 1
         self.assertTrue(0 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                     "File Storage not initiated w/ updated_at")
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.state.save()
         actual = type(self.state.updated_at)
         expected = type(datetime.now())
         self.assertEqual(expected, actual)
@@ -107,12 +112,11 @@ class TestStateInstances(unittest.TestCase):
 
     def test_name_attribute(self):
         """... add name attribute"""
-        self.state.name = "betty"
         if hasattr(self.state, 'name'):
             actual = self.state.name
         else:
-            acual = ''
-        expected = "betty"
+            actual = ''
+        expected = "California"
         self.assertEqual(expected, actual)
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 Review = models.Review
 BaseModel = models.BaseModel
@@ -43,6 +44,9 @@ class TestReviewDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "Test not yet prepared to handle DB Storage: "
+                 "Update Requred")
 class TestReviewInstances(unittest.TestCase):
     """testing for class instances"""
 

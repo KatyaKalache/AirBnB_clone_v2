@@ -10,6 +10,7 @@ import inspect
 from contextlib import contextmanager
 from io import StringIO
 import sys
+from os import environ
 
 Place = models.Place
 State = models.State
@@ -68,6 +69,8 @@ class TestHBNBcmdDocs(unittest.TestCase):
                 self.assertTrue(len(f[1].__doc__) > 1)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 'not designed for DB yet')
 class TestHBNBcmdCreate(unittest.TestCase):
     """testing instantiation of CLI & create() function"""
 
@@ -172,6 +175,8 @@ class TestHBNBcmdCreate(unittest.TestCase):
         self.assertIs(type(actual), float)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 'not designed for DB yet')
 class TestHBNBcmdErr(unittest.TestCase):
     """Tests create method -> attempts to throw errors with strange params"""
 
@@ -260,7 +265,7 @@ class TestHBNBcmdFunc(unittest.TestCase):
         print('.................................\n\n')
         storage.delete_all()
         print('...creating new State object: ', end='')
-        TestHBNBcmdFunc.cli.do_create('State')
+        TestHBNBcmdFunc.cli.do_create('State name="California"')
         print('')
         storage_objs = storage.all()
         for v in storage_objs.values():
@@ -277,9 +282,9 @@ class TestHBNBcmdFunc(unittest.TestCase):
 
     def test_attr_name(self):
         """... checks if proper parameter for name was created"""
-        self.CLI.do_update('State {} name "California"'.format(self.obj.id))
+        self.CLI.do_update('State {} name "Broccoli"'.format(self.obj.id))
         actual = self.obj.name
-        expected = 'California'
+        expected = 'Broccoli'
         self.assertEqual(expected, actual)
 
     def test_destroy(self):
@@ -292,6 +297,8 @@ class TestHBNBcmdFunc(unittest.TestCase):
             self.assertIsNone(None)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 'not designed for DB yet')
 class TestHBNBcmdDotNotation(unittest.TestCase):
     """Tests for .function() notation for: .create(), .update(), .destroy()"""
 
@@ -307,10 +314,10 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
         print('..... For HBNBCommand Class ......')
         print('..................................\n\n')
         storage.delete_all()
-        print('...creating new User object: ', end='')
-        TestHBNBcmdDotNotation.cli.do_User('.create()')
-        print('...creating new User object: ', end='')
-        TestHBNBcmdDotNotation.cli.do_User('.create()')
+        print('...creating new State object: ', end='')
+        TestHBNBcmdDotNotation.cli.do_State('.create(name="Califoria")')
+        print('...creating new State object: ', end='')
+        TestHBNBcmdDotNotation.cli.do_State('.create(name="Illinois")')
         print('')
         storage_objs = storage.all()
         for v in storage_objs.values():
@@ -326,40 +333,40 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
         self.obj2 = TestHBNBcmdDotNotation.obj2
 
     def test_create(self):
-        """... tests creation of class User with attributes"""
-        self.assertIsInstance(self.obj, User)
+        """... tests creation of class State with attributes"""
+        self.assertIsInstance(self.obj, State)
 
     def test_attr_update(self):
         """... checks if proper parameter for name was created"""
-        self.CLI.do_User('.update("{}", "first_name", '
-                         '"Mongo")'.format(self.obj.id))
-        actual = self.obj.first_name
+        self.CLI.do_State('.update("{}", "name", '
+                          '"Mongo")'.format(self.obj.id))
+        actual = self.obj.name
         expected = "Mongo"
         self.assertEqual(expected, actual)
 
     def test_update_dict(self):
         """... checks if proper parameters created with dict"""
-        self.CLI.do_User('.update("{}", {{"last_name": "Nginx", '
-                         '"age": 89}})'.format(self.obj.id))
-        actual = self.obj.last_name
+        self.CLI.do_State('.update("{}", {{"name": "Nginx", '
+                          '"id": 89}})'.format(self.obj.id))
+        actual = self.obj.name
         expected = 'Nginx'
         self.assertEqual(expected, actual)
-        actual = self.obj.age
+        actual = self.obj.id
         expected = 89
         self.assertEqual(expected, actual)
         self.assertIs(type(actual), int)
 
     def test_attr_reupdate(self):
         """... checks if attribute can be reupdated"""
-        self.CLI.do_User('.update("{}", "age", 55)'.format(self.obj.id))
-        actual = self.obj.age
+        self.CLI.do_State('.update("{}", "id", 55)'.format(self.obj.id))
+        actual = self.obj.id
         expected = 55
         self.assertEqual(expected, actual)
         self.assertIs(type(actual), int)
 
     def test_destroy(self):
         """... checks if object can be destroyed"""
-        self.CLI.do_destroy('User {}'.format(self.obj2.id))
+        self.CLI.do_destroy('State {}'.format(self.obj2.id))
         try:
             self.obj2
             self.assertTrue(False)
@@ -367,6 +374,8 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
             self.assertIsNone(None)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 'not designed for DB yet')
 class TestHBNBcmdCount(unittest.TestCase):
     """Tests .count() method for all Classes"""
 
@@ -457,6 +466,8 @@ class TestHBNBcmdCount(unittest.TestCase):
         self.assertEqual(expected, actual)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 'not designed for DB yet')
 class TestHBNBcmdAll(unittest.TestCase):
     """Tests .all() method for all Classes"""
 

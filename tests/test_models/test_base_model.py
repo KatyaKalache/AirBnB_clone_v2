@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 BaseModel = models.BaseModel
 
@@ -42,6 +43,8 @@ class TestBaseModelDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "DB Storage does not store BaseModel Classes")
 class TestBaseModelInstances(unittest.TestCase):
     """testing for class instances"""
 

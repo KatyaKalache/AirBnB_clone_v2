@@ -7,7 +7,9 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
+State = models.State
 City = models.City
 BaseModel = models.BaseModel
 
@@ -55,7 +57,9 @@ class TestCityInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new city for testing"""
-        self.city = City()
+        self.state = State(**{"name": "California"})
+        self.city = City(**{"state_id": "{}".format(self.state.id),
+                            "name": "SanFrancisco"})
 
     def test_instantiation(self):
         """... checks if City is properly instantiated"""
@@ -71,6 +75,8 @@ class TestCityInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                     "DB Storage is initialized with updated at")
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         self.city = City()
@@ -80,9 +86,10 @@ class TestCityInstances(unittest.TestCase):
             actual += 1
         self.assertTrue(0 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                     "DB Storage is initialized with updated at")
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.city.save()
         actual = type(self.city.updated_at)
         expected = type(datetime.now())
         self.assertEqual(expected, actual)
@@ -106,14 +113,13 @@ class TestCityInstances(unittest.TestCase):
         expected = 'City'
         self.assertEqual(expected, actual)
 
-    def test_email_attribute(self):
-        """... add email attribute"""
-        self.city.state_id = 'IL'
-        if hasattr(self.city, 'state_id'):
-            actual = self.city.state_id
+    def test_name_attribute(self):
+        """... add update attribute"""
+        if hasattr(self.city, 'name'):
+            actual = self.city.name
         else:
             actual = ''
-        expected = 'IL'
+        expected = 'SanFrancisco'
         self.assertEqual(expected, actual)
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ import json
 import os
 import inspect
 
+environ = os.environ
 User = models.user.User
 BaseModel = models.base_model.BaseModel
 FileStorage = models.file_storage.FileStorage
@@ -48,6 +49,8 @@ class TestFileStorageDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "DB Storage doesn't use FileStorage")
 class TestBmFsInstances(unittest.TestCase):
     """testing for class instances"""
 
@@ -136,6 +139,8 @@ class TestBmFsInstances(unittest.TestCase):
         self.assertTrue(1 == actual)
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "DB Storage doesn't use FileStorage")
 class TestUserFsInstances(unittest.TestCase):
     """testing for class instances"""
 
