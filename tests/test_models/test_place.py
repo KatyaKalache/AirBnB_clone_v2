@@ -9,6 +9,9 @@ import json
 import inspect
 from os import environ
 
+User = models.User
+State = models.State
+City = models.City
 Place = models.Place
 BaseModel = models.BaseModel
 
@@ -44,11 +47,25 @@ class TestPlaceDocs(unittest.TestCase):
             self.assertTrue(len(f[1].__doc__) > 1)
 
 
-@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
-                 "Place Tests are designed for File Storage only: "
-                 "Update Needed")
 class TestPlaceInstances(unittest.TestCase):
     """testing for class instances"""
+
+    state = State(**{"name": "California"})
+    user = User(**{"email": "bettyholbertn@gmail.com",
+                   "password": "apass",
+                   "first_name": "a_name",
+                   "last_name": "a_last_name"})
+    user.save()
+    state.save()
+    city = City(**{"state_id": "{}".format(state.id),
+                   "name": "SanFrancisco"})
+    city.save()
+    place = Place(**{'city_id': '{}'.format(city.id),
+                     'user_id': '{}'.format(user.id),
+                     'name': 'A humble home',
+                     'number_rooms': 4,
+                     'number_bathrooms': 2,
+                     'max_guest': 99})
 
     @classmethod
     def setUpClass(cls):
@@ -59,7 +76,7 @@ class TestPlaceInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new place for testing"""
-        self.place = Place()
+        self.place = TestPlaceInstances.place
 
     def test_instantiation(self):
         """... checks if Place is properly instantiated"""
@@ -75,17 +92,8 @@ class TestPlaceInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
-    def test_instantiation_no_updated(self):
-        """... should not have updated attribute"""
-        my_str = str(self.place)
-        actual = 0
-        if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
-
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.place.save()
         actual = type(self.place.updated_at)
         expected = type(datetime.now())
         self.assertEqual(expected, actual)
@@ -109,15 +117,25 @@ class TestPlaceInstances(unittest.TestCase):
         expected = 'Place'
         self.assertEqual(expected, actual)
 
-    def test_email_attribute(self):
-        """... add email attribute"""
-        self.place.max_guest = 3
-        if hasattr(self.place, 'max_guest'):
-            actual = self.place.max_guest
+    def test_name_attribute(self):
+        """... check name attribute"""
+        if hasattr(self.place, 'name'):
+            actual = self.place.name
         else:
             actual = ''
-        expected = 3
+        expected = 'A humble home'
         self.assertEqual(expected, actual)
+        self.assertIsInstance(self.place, Place)
+
+    def test_num_rms_attribute(self):
+        """... check number of rooms attribute"""
+        if hasattr(self.place, 'number_rooms'):
+            actual = self.place.number_rooms
+        else:
+            actual = 0
+        expected = 4
+        self.assertEqual(expected, actual)
+        self.assertIsInstance(self.place.number_rooms, int)
 
 if __name__ == '__main__':
     unittest.main

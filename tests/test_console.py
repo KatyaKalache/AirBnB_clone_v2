@@ -70,7 +70,7 @@ class TestHBNBcmdDocs(unittest.TestCase):
 
 
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
-                 'not designed for DB yet')
+                 'FS tests not for DB')
 class TestHBNBcmdCreate(unittest.TestCase):
     """testing instantiation of CLI & create() function"""
 
@@ -173,6 +173,114 @@ class TestHBNBcmdCreate(unittest.TestCase):
         expected = -122.431297
         self.assertEqual(expected, actual)
         self.assertIs(type(actual), float)
+
+
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                 'DB tests not for FS')
+class TestHBNBcmdCreateDB(unittest.TestCase):
+    """testing instantiation of CLI & create() function"""
+
+    cli = HBNBCommand()
+
+    @classmethod
+    def setUpClass(cls):
+        """init: prints output to mark new tests"""
+        print('\n\n.................................')
+        print('.... Test create() w/ params ....')
+        print('..... For HBNBCommand Class .....')
+        print('.................................\n\n')
+        storage.delete_all()
+        print('...creating new Place object: ', end='')
+        CLI = TestHBNBcmdCreateDB.cli
+        with redirect_streams() as (std_out, std_err):
+            CLI.do_create('State '
+                          'name="California"')
+        TestHBNBcmdCreateDB.test_state_id = std_out.getvalue()[:-1]
+        with redirect_streams() as (std_out, std_err):
+            CLI.do_create('User '
+                          'email="bettyholbertn@gmail.com" '
+                          'password="apass" '
+                          'first_name="a_name" '
+                          'last_name="a_last_name" ')
+        TestHBNBcmdCreateDB.test_user_id = std_out.getvalue()[:-1]
+        with redirect_streams() as (std_out, std_err):
+            CLI.do_create('City ' +
+                          'state_id="{}" '
+                          .format(TestHBNBcmdCreateDB.test_state_id) +
+                          'name="SanFrancisco"')
+        TestHBNBcmdCreateDB.test_city_id = std_out.getvalue()[:-1]
+        with redirect_streams() as (std_out, std_err):
+            CLI.do_create('Place ' +
+                          'city_id="{}" '
+                          .format(TestHBNBcmdCreateDB.test_city_id) +
+                          'user_id="{}" '
+                          .format(TestHBNBcmdCreateDB.test_user_id) +
+                          'name="A_humble_home" ' +
+                          'number_rooms=4 ' +
+                          'number_bathrooms=2 ' +
+                          'max_guest=10')
+        TestHBNBcmdCreateDB.test_place_id = std_out.getvalue()[:-1]
+        print('... done creating')
+        storage_objs = storage.all()
+        for v in storage_objs.values():
+            if v.id == TestHBNBcmdCreateDB.test_place_id:
+                TestHBNBcmdCreateDB.obj = v
+
+    def setUp(self):
+        """initializes new HBNBCommand instance for each test"""
+        self.CLI = TestHBNBcmdCreateDB.cli
+        self.obj = TestHBNBcmdCreateDB.obj
+        self.state_id = TestHBNBcmdCreateDB.test_state_id
+        self.user_id = TestHBNBcmdCreateDB.test_user_id
+        self.city_id = TestHBNBcmdCreateDB.test_city_id
+        self.place_id = TestHBNBcmdCreateDB.test_place_id
+
+    def test_instantiation(self):
+        """... checks if HBNBCommand CLI Object is properly instantiated"""
+        self.assertIsInstance(self.CLI, HBNBCommand)
+
+    def test_create(self):
+        """... tests creation of class City with attributes"""
+        self.assertIsInstance(self.obj, CNC['Place'])
+
+    def test_attr_user_id(self):
+        """... checks if proper parameter for user_id was created"""
+        actual = self.obj.user_id
+        expected = self.user_id
+        self.assertEqual(expected, actual)
+
+    def test_attr_city_id(self):
+        """... checks if proper parameter for city_id was created"""
+        actual = self.obj.city_id
+        expected = self.city_id
+        self.assertEqual(expected, actual)
+
+    def test_attr_name(self):
+        """... checks if proper parameter for name was created"""
+        actual = self.obj.name
+        expected = 'A humble home'
+        self.assertEqual(expected, actual)
+
+    def test_attr_num_rm(self):
+        """... checks if proper parameter for number_rooms was created"""
+        actual = self.obj.number_rooms
+        expected = 4
+        self.assertEqual(expected, actual)
+        self.assertIs(type(actual), int)
+
+    def test_attr_num_btrm(self):
+        """... checks if proper parameter for number_bathrooms was created"""
+        actual = self.obj.number_bathrooms
+        expected = 2
+        self.assertEqual(expected, actual)
+        self.assertIs(type(actual), int)
+
+    def test_attr_max_guest(self):
+        """... checks if proper parameter for max_guest was created"""
+        actual = self.obj.max_guest
+        expected = 10
+        self.assertEqual(expected, actual)
+        self.assertIs(type(actual), int)
 
 
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
