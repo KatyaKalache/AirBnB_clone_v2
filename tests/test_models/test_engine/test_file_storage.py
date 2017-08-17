@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Unit Test for BaseModel Class
+Unit Test for File Storage Class
 """
 import unittest
 from datetime import datetime
@@ -21,7 +21,7 @@ F = './dev/file.json'
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
                  "DB Storage doesn't use FileStorage")
 class TestFileStorageDocs(unittest.TestCase):
-    """Class for testing BaseModel docs"""
+    """Class for testing File Storage docs"""
 
     if environ.get('HBNB_TYPE_STORAGE') != 'db':
         all_funcs = inspect.getmembers(FileStorage, inspect.isfunction)
