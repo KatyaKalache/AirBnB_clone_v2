@@ -46,6 +46,7 @@ class TestDBStorageDocs(unittest.TestCase):
             actual = 0
         self.assertTrue(actual > 5)
 
+
     def test_all_function_docs(self):
         """... tests for ALL DOCS for all functions in file_storage file"""
         AF = TestDBStorageDocs.all_funcs
