@@ -14,7 +14,7 @@ if "HBNB_TYPE_STORAGE" in environ and environ["HBNB_TYPE_STORAGE"] == 'db':
     storage = db_storage.DBStorage()
     CNC = db_storage.DBStorage.CNC
 else:
-    from models.file_storage import file_storage
+    from models.engine import file_storage
     storage = file_storage.FileStorage()
     CNC = file_storage.FileStorage.CNC
 
