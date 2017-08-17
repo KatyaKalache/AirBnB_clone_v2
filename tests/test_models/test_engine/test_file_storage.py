@@ -12,15 +12,19 @@ import inspect
 environ = os.environ
 User = models.user.User
 BaseModel = models.base_model.BaseModel
-FileStorage = models.file_storage.FileStorage
+if environ.get('HBNB_TYPE_STORAGE') != 'db':
+    FileStorage = models.file_storage.FileStorage
 fs = models.storage
 F = './dev/file.json'
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                 "DB Storage doesn't use FileStorage")
 class TestFileStorageDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
 
-    all_funcs = inspect.getmembers(FileStorage, inspect.isfunction)
+    if environ.get('HBNB_TYPE_STORAGE') != 'db':
+        all_funcs = inspect.getmembers(FileStorage, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
@@ -201,6 +205,5 @@ class TestUserFsInstances(unittest.TestCase):
                 actual = 1
         self.assertTrue(1 == actual)
 
-
-if __name__ == '__main__':
+if environ.get('HBNB_TYPE_STORAGE') != 'db' and __name__ == '__main__':
     unittest.main
