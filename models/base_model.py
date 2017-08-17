@@ -11,6 +11,7 @@ import datetime
 from sqlalchemy import String, Column, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+import sys
 
 datetime = datetime.datetime
 utcnow = datetime.utcnow
@@ -43,11 +44,14 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """instantiation of new BaseModel Class"""
-        if kwargs:
-            self.__set_attributes(kwargs)
-        else:
-            self.id = str(uuid4())
-            self.created_at = utcnow()
+        try:
+            if kwargs:
+                self.__set_attributes(kwargs)
+            else:
+                self.id = str(uuid4())
+                self.created_at = utcnow()
+        except Exception as e:
+            models.storage.handle_exception(e)
 
     def __set_attributes(self, kwargs):
         """converts kwargs values to python class attributes"""

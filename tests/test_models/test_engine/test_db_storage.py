@@ -66,7 +66,7 @@ class TestDBStorageDocs(unittest.TestCase):
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
                  "DB Storage doesn't use FileStorage")
 class TestAllInstances(unittest.TestCase):
-    """testing for class instances"""
+    """testing for Various State Class instances & methods"""
 
     @classmethod
     def setUpClass(cls):
@@ -145,6 +145,148 @@ class TestAllInstances(unittest.TestCase):
             if type(obj).__name__ == check_cls and obj.name == check:
                 actual += 1
         self.assertTrue(actual == 0)
+
+
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                 "DB Storage doesn't use FileStorage")
+class TestTracebackNullError(unittest.TestCase):
+    """testing for throwing Traceback erros:
+    missing attributes that Cannot be NULL"""
+
+    @classmethod
+    def setUpClass(cls):
+        """sets up the class for this round of tests"""
+        print('\n\n....................................')
+        print('.......... Testing DBStorage .......')
+        print('...... Trying to Throw Errors ......')
+        print('....................................\n\n')
+
+    def test_state_no_name(self):
+        """... checks to create a state with no name"""
+        with self.assertRaises(Exception) as context:
+            s = State()
+            self.assertTrue('"Column \'name\' cannot be null"'
+                            in str(context.exception))
+
+    def test_city_no_state(self):
+        """... checks to create a city with invalid state"""
+        with self.assertRaises(Exception) as context:
+            c = City(name="Tapioca", state_id="NOT VALID")
+            self.assertTrue('a child row: a foreign key constraint fails'
+                            in str(context.exception))
+
+    def test_place_no_user(self):
+        """... checks to create a place with no city"""
+        with self.assertRaises(Exception) as context:
+            p = Place()
+            print(context.exception)
+            self.assertTrue('"Column \'city_id\' cannot be null"'
+                            in str(context.exception))
+
+    def test_review_no_text(self):
+        """... checks to create a Review with no text"""
+        with self.assertRaises(Exception) as context:
+            r = Review()
+            print(context.exception)
+            self.assertTrue('"Column \'text\' cannot be null"'
+                            in str(context.exception))
+
+    def test_amenity_no_name(self):
+        """... checks to create an amenity with no name"""
+        with self.assertRaises(Exception) as context:
+            a = Amenity()
+            print(context.exception)
+            self.assertTrue('"Column \'name\' cannot be null"'
+                            in str(context.exception))
+
+    def test_user_no_name(self):
+        """... checks to create a user with no email"""
+        with self.assertRaises(Exception) as context:
+            u = User()
+            print(context.exception)
+            self.assertTrue('"Column \'email\' cannot be null"'
+                            in str(context.exception))
+
+
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                 "DB Storage doesn't use FileStorage")
+class TestTracebackTypeError(unittest.TestCase):
+    """testing for throwing Traceback erros
+    Setting attributes of wrong Type"""
+
+    @classmethod
+    def setUpClass(cls):
+        """sets up the class for this round of tests"""
+        print('\n\n....................................')
+        print('.......... Testing DBStorage .......')
+        print('. Throw Type Error for Place Class .')
+        print('....................................\n\n')
+        cls.s = State(name="Illinois")
+        cls.s.save()
+        cls.c = City(state_id=cls.s.id,
+                     name="Chicago")
+        cls.c.save()
+        cls.u = User(email="holberton@holbertonschool.com",
+                     password="pwd")
+        cls.u.save()
+        storage.save()
+
+    def setUp(self):
+        """initializes new user for testing"""
+        self.s = TestTracebackTypeError.s
+        self.c = TestTracebackTypeError.c
+        self.u = TestTracebackTypeError.u
+        self.cls = TestTracebackTypeError
+
+    def test_description_int(self):
+        """... create int type description"""
+        with self.assertRaises(Exception) as context:
+            p1 = Place(user_id=self.cls.u.id,
+                       city_id=self.cls.c.id,
+                       name="a house",
+                       description=5)
+            self.assertTrue('Incorrect string value:'
+                            in str(context.exception))
+
+    def test_number_rooms_str(self):
+        """... create number_rooms that is str type"""
+        with self.assertRaises(Exception) as context:
+            p1 = Place(user_id=self.cls.u.id,
+                       city_id=self.cls.c.id,
+                       name="a house",
+                       number_rooms="1.0")
+            self.assertTrue('Incorrect integer value:'
+                            in str(context.exception))
+
+    def test_number_bathrooms_str(self):
+        """... create number_bathrooms that is str type"""
+        with self.assertRaises(Exception) as context:
+            p1 = Place(user_id=self.cls.u.id,
+                       city_id=self.cls.c.id,
+                       name="a house",
+                       number_bathrooms="1.0")
+            self.assertTrue('Incorrect integer value:'
+                            in str(context.exception))
+
+    def test_max_guest_str(self):
+        """... create max_guest str type"""
+        with self.assertRaises(Exception) as context:
+            p1 = Place(user_id=self.cls.u.id,
+                       city_id=self.cls.c.id,
+                       name="a house",
+                       max_guest="1.0")
+            self.assertTrue('Incorrect integer value:'
+                            in str(context.exception))
+
+    def test_amenity_no_name(self):
+        """... create price_by_night str"""
+        with self.assertRaises(Exception) as context:
+            p1 = Place(user_id=self.cls.u.id,
+                       city_id=self.cls.c.id,
+                       name="a house",
+                       price_by_night="1.0")
+            self.assertTrue('Incorrect integer value:'
+                            in str(context.exception))
 
 if __name__ == '__main__':
     unittest.main
