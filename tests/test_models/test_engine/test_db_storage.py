@@ -32,6 +32,7 @@ class TestDBStorageDocs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """sets up the class for this round of tests"""
         print('\n\n.................................')
         print('..... Testing Documentation .....')
         print('...... For DBStorage Class ......')
@@ -69,6 +70,7 @@ class TestAllInstances(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """sets up the class for this round of tests"""
         print('\n\n...................................')
         print('.......... Testing DBStorage .......')
         print('. State, City, User, Place Amenity .')
@@ -112,9 +114,7 @@ class TestAllInstances(unittest.TestCase):
         """... checks if all(), save(), and reload function
         in new instance.  This also tests for reload"""
         actual = 0
-        new_storage = DBStorage()
-        new_storage.reload()
-        db_objs = new_storage.all()
+        db_objs = storage.all()
         for obj in db_objs.values():
             for x in [self.s.id, self.c.id, self.u.id, self.p1.id]:
                 if x == obj.id:

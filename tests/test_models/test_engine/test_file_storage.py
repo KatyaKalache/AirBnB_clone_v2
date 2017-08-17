@@ -28,6 +28,7 @@ class TestFileStorageDocs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """sets up the class"""
         print('\n\n.................................')
         print('..... Testing Documentation .....')
         print('..... For FileStorage Class .....')
@@ -60,6 +61,7 @@ class TestBmFsInstances(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """sets up the class"""
         print('\n\n.................................')
         print('...... Testing FileStorate ......')
         print('..... For FileStorage Class .....')
@@ -150,6 +152,7 @@ class TestUserFsInstances(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """sets up the class"""
         print('\n\n.................................')
         print('...... Testing FileStorage ......')
         print('.......... User  Class ..........')
@@ -205,5 +208,5 @@ class TestUserFsInstances(unittest.TestCase):
                 actual = 1
         self.assertTrue(1 == actual)
 
-if environ.get('HBNB_TYPE_STORAGE') != 'db' and __name__ == '__main__':
+if __name__ == '__main__':
     unittest.main
