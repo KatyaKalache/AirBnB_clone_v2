@@ -63,12 +63,18 @@ class DBStorage:
 
     def new(self, obj):
         """add the object to the current DB session"""
-        if obj:
-            self.__session.add(obj)
+        try:
+            if obj:
+                self.__session.add(obj)
+        except Exception as e:
+            self.handle_exception(e)
 
     def save(self):
         """commit all changes of the current DB session"""
-        self.__session.commit()
+        try:
+            self.__session.commit()
+        except Exception as e:
+            self.handle_exception(e)
 
     def reload(self):
         """create all tables in DB & create current DB session from engine"""
@@ -90,3 +96,8 @@ class DBStorage:
                 to_delete = all_objs.pop(0)
                 to_delete.delete()
         self.save()
+
+    def handle_exception(self, e):
+        """rollsback session in event of error"""
+        print("ERROR, Exception: {}".format(e.args[0]))
+        self.__session.rollback()

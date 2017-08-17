@@ -149,9 +149,9 @@ class HBNBCommand(cmd.Cmd):
                 class_obj = CNC[k]
                 if len(arg) > 1:
                     d = self.create_dict({}, arg[1:])
-                    my_obj = class_obj(**d)
                 else:
-                    my_obj = class_obj()
+                    d = {}
+                my_obj = class_obj(**d)
                 my_obj.save()
                 print(my_obj.id)
 
