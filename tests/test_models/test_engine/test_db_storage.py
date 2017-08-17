@@ -12,14 +12,18 @@ import inspect
 environ = os.environ
 User = models.user.User
 BaseModel = models.base_model.BaseModel
-DBStorage = models.db_storage.DBStorage
-storage = models.storage
+if environ.get('HBNB_TYPE_STORAGE') == 'db':
+    DBStorage = models.db_storage.DBStorage
+    storage = models.storage
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                 "DB Storage doesn't use FileStorage")
 class TestDBStorageDocs(unittest.TestCase):
     """Class for testing DB Storage docs"""
 
-    all_funcs = inspect.getmembers(DBStorage, inspect.isfunction)
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
+        all_funcs = inspect.getmembers(DBStorage, inspect.isfunction)
 
     @classmethod
     def setUpClass(cls):
