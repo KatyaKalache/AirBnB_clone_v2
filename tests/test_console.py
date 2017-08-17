@@ -39,8 +39,6 @@ def redirect_streams():
 class TestHBNBcmdDocs(unittest.TestCase):
     """Class for testing BaseModel docs"""
 
-    all_funcs = inspect.getmembers(console.HBNBCommand, inspect.isfunction)
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
@@ -48,6 +46,8 @@ class TestHBNBcmdDocs(unittest.TestCase):
         print('..... Testing Documentation .....')
         print('.......  For the Console  .......')
         print('.................................\n\n')
+        cls.all_funcs = inspect.getmembers(console.HBNBCommand,
+                                           inspect.isfunction)
 
     def test_doc_file(self):
         """... documentation for the file"""
@@ -74,8 +74,6 @@ class TestHBNBcmdDocs(unittest.TestCase):
 class TestHBNBcmdCreate(unittest.TestCase):
     """testing instantiation of CLI & create() function"""
 
-    cli = HBNBCommand()
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
@@ -85,21 +83,21 @@ class TestHBNBcmdCreate(unittest.TestCase):
         print('.................................\n\n')
         storage.delete_all()
         print('...creating new Place object: ', end='')
-        CLI = TestHBNBcmdCreate.cli
-        CLI.do_create('Place '
-                      'city_id="0001" '
-                      'user_id="0001" '
-                      'name="My_little_house" '
-                      'number_rooms=4 '
-                      'number_bathrooms=2 '
-                      'max_guest=10 '
-                      'price_by_night=300 '
-                      'latitude=37.773972 '
-                      'longitude=-122.431297')
+        cls.cli = HBNBCommand()
+        cls.cli.do_create('Place '
+                          'city_id="0001" '
+                          'user_id="0001" '
+                          'name="My_little_house" '
+                          'number_rooms=4 '
+                          'number_bathrooms=2 '
+                          'max_guest=10 '
+                          'price_by_night=300 '
+                          'latitude=37.773972 '
+                          'longitude=-122.431297')
         print('')
-        storage_objs = storage.all()
-        for v in storage_objs.values():
-            TestHBNBcmdCreate.obj = v
+        cls.storage_objs = storage.all()
+        for v in cls.storage_objs.values():
+            cls.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
@@ -176,22 +174,22 @@ class TestHBNBcmdCreate(unittest.TestCase):
 
 
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
-                 'DB tests not for FS')
+                 'DB tests made for DBStorage not FS Storage')
 class TestHBNBcmdCreateDB(unittest.TestCase):
-    """testing instantiation of CLI & create() function"""
-
-    cli = HBNBCommand()
+    """testing instantiation of CLI & create()
+    for Classes State, User, City, Place"""
 
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
         print('\n\n.................................')
         print('.... Test create() w/ params ....')
-        print('..... For HBNBCommand Class .....')
+        print('... State, User, City, Place ....')
         print('.................................\n\n')
         storage.delete_all()
         print('...creating new Place object: ', end='')
-        CLI = TestHBNBcmdCreateDB.cli
+        cls.cli = HBNBCommand()
+        CLI = cls.cli
         with redirect_streams() as (std_out, std_err):
             CLI.do_create('State '
                           'name="California"')
@@ -204,27 +202,25 @@ class TestHBNBcmdCreateDB(unittest.TestCase):
                           'last_name="a_last_name" ')
         TestHBNBcmdCreateDB.test_user_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
-            CLI.do_create('City ' +
+            CLI.do_create('City '
                           'state_id="{}" '
-                          .format(TestHBNBcmdCreateDB.test_state_id) +
-                          'name="SanFrancisco"')
+                          'name="SanFrancisco"'.format(cls.test_state_id))
         TestHBNBcmdCreateDB.test_city_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
-            CLI.do_create('Place ' +
+            CLI.do_create('Place '
                           'city_id="{}" '
-                          .format(TestHBNBcmdCreateDB.test_city_id) +
                           'user_id="{}" '
-                          .format(TestHBNBcmdCreateDB.test_user_id) +
-                          'name="A_humble_home" ' +
-                          'number_rooms=4 ' +
-                          'number_bathrooms=2 ' +
-                          'max_guest=10')
+                          'name="A_humble_home" '
+                          'number_rooms=4 '
+                          'number_bathrooms=2 '
+                          'max_guest=10'.format(cls.test_city_id,
+                                                cls.test_user_id))
         TestHBNBcmdCreateDB.test_place_id = std_out.getvalue()[:-1]
         print('... done creating')
         storage_objs = storage.all()
         for v in storage_objs.values():
-            if v.id == TestHBNBcmdCreateDB.test_place_id:
-                TestHBNBcmdCreateDB.obj = v
+            if v.id == cls.test_place_id:
+                cls.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
@@ -288,8 +284,6 @@ class TestHBNBcmdCreateDB(unittest.TestCase):
 class TestHBNBcmdErr(unittest.TestCase):
     """Tests create method -> attempts to throw errors with strange params"""
 
-    cli = HBNBCommand()
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
@@ -299,18 +293,18 @@ class TestHBNBcmdErr(unittest.TestCase):
         print('.................................\n\n')
         storage.delete_all()
         print('...creating new Place object: ', end='')
-        CLI = TestHBNBcmdErr.cli
-        CLI.do_create('Place '
-                      'city_id="00""""01" '
-                      'user_id="00_01" '
-                      'name="My____little____house" '
-                      'number_rooms="""4""" '
-                      'number_bathrooms=2.0 '
-                      'max_guest="\'\'"HEy-O"\'\'" ')
+        cls.cli = HBNBCommand()
+        cls.cli.do_create('Place '
+                          'city_id="00""""01" '
+                          'user_id="00_01" '
+                          'name="My____little____house" '
+                          'number_rooms="""4""" '
+                          'number_bathrooms=2.0 '
+                          'max_guest="\'\'"HEy-O"\'\'" ')
         print('')
         storage_objs = storage.all()
         for v in storage_objs.values():
-            TestHBNBcmdErr.obj = v
+            cls.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
@@ -362,8 +356,6 @@ class TestHBNBcmdErr(unittest.TestCase):
 class TestHBNBcmdFunc(unittest.TestCase):
     """Test CLI for create, update, destroy Standard Notation"""
 
-    cli = HBNBCommand()
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
@@ -373,11 +365,12 @@ class TestHBNBcmdFunc(unittest.TestCase):
         print('.................................\n\n')
         storage.delete_all()
         print('...creating new State object: ', end='')
-        TestHBNBcmdFunc.cli.do_create('State name="California"')
+        cls.cli = HBNBCommand()
+        cls.cli.do_create('State name="California"')
         print('')
         storage_objs = storage.all()
         for v in storage_objs.values():
-            TestHBNBcmdFunc.obj = v
+            cls.obj = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
@@ -410,10 +403,6 @@ class TestHBNBcmdFunc(unittest.TestCase):
 class TestHBNBcmdDotNotation(unittest.TestCase):
     """Tests for .function() notation for: .create(), .update(), .destroy()"""
 
-    cli = HBNBCommand()
-    obj = None
-    obj2 = None
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests"""
@@ -422,17 +411,19 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
         print('..... For HBNBCommand Class ......')
         print('..................................\n\n')
         storage.delete_all()
+        cls.obj = None
         print('...creating new State object: ', end='')
-        TestHBNBcmdDotNotation.cli.do_State('.create(name="Califoria")')
+        cls.cli = HBNBCommand()
+        cls.cli.do_State('.create(name="Califoria")')
         print('...creating new State object: ', end='')
-        TestHBNBcmdDotNotation.cli.do_State('.create(name="Illinois")')
+        cls.cli.do_State('.create(name="Illinois")')
         print('')
         storage_objs = storage.all()
         for v in storage_objs.values():
-            if not TestHBNBcmdDotNotation.obj:
-                TestHBNBcmdDotNotation.obj = v
+            if not cls.obj:
+                cls.obj = v
             else:
-                TestHBNBcmdDotNotation.obj2 = v
+                cls.obj2 = v
 
     def setUp(self):
         """initializes new HBNBCommand instance for each test"""
@@ -448,7 +439,10 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
         """... checks if proper parameter for name was created"""
         self.CLI.do_State('.update("{}", name, '
                           'Mongo)'.format(self.obj.id))
-        actual = self.obj.name
+        new_objs = storage.all()
+        for obj in new_objs.values():
+            if obj.id == self.obj.id:
+                actual = obj.name
         expected = "Mongo"
         self.assertEqual(expected, actual)
 
@@ -487,8 +481,6 @@ class TestHBNBcmdDotNotation(unittest.TestCase):
 class TestHBNBcmdCount(unittest.TestCase):
     """Tests .count() method for all Classes"""
 
-    cli = HBNBCommand()
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests
@@ -499,12 +491,12 @@ class TestHBNBcmdCount(unittest.TestCase):
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
         storage.delete_all()
-        CLI = TestHBNBcmdCount.cli
+        cls.cli = HBNBCommand()
         for k in CNC.keys():
             print('...creating new {} object: '.format(k), end='')
-            CLI.do_create(k)
+            cls.cli.do_create(k)
         print('')
-        TestHBNBcmdCount.storage_objs = storage.all()
+        cls.storage_objs = storage.all()
 
     def setUp(self):
         """initializes new HBNBCommand instance & storage obj for each test"""
@@ -579,8 +571,6 @@ class TestHBNBcmdCount(unittest.TestCase):
 class TestHBNBcmdAll(unittest.TestCase):
     """Tests .all() method for all Classes"""
 
-    cli = HBNBCommand()
-
     @classmethod
     def setUpClass(cls):
         """init: prints output to mark new tests
@@ -591,14 +581,14 @@ class TestHBNBcmdAll(unittest.TestCase):
         print('..... For HBNBCommand Class .....')
         print('.................................\n\n')
         storage.delete_all()
-        CLI = TestHBNBcmdAll.cli
+        cls.cli = HBNBCommand()
         for k in CNC.keys():
             print('...creating new {} object: '.format(k), end='')
-            CLI.do_create(k)
+            cls.cli.do_create(k)
         print('')
-        TestHBNBcmdAll.storage_objs = storage.all()
-        TestHBNBcmdAll.all_ids = list(v.id for v in
-                                      TestHBNBcmdAll.storage_objs.values())
+        cls.storage_objs = storage.all()
+        cls.all_ids = list(v.id for v in
+                           TestHBNBcmdAll.storage_objs.values())
 
     def setUp(self):
         """initializes new HBNBCommand instance & storage obj for each test"""
