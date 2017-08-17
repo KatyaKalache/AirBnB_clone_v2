@@ -71,31 +71,32 @@ class TestAllInstances(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the class for this round of tests"""
-        print('\n\n...................................')
+        print('\n\n....................................')
         print('.......... Testing DBStorage .......')
         print('. State, City, User, Place Amenity .')
-        print('...................................\n\n')
+        print('.. Initial Variables Provided by: ..')
+        print('............ @glyif.................\n\n')
         cls.s = State(name="California")
         cls.s.save()
         cls.c = City(state_id=cls.s.id,
                      name="San Francisco")
         cls.c.save()
-        cls.u = User(email="a@a.com",
+        cls.u = User(email="betty@holbertonschool.com",
                      password="pwd")
         cls.u.save()
         cls.p1 = Place(user_id=cls.u.id,
                        city_id=cls.c.id,
-                       name="House 1")
+                       name="a house")
         cls.p1.save()
         cls.p2 = Place(user_id=cls.u.id,
                        city_id=cls.c.id,
-                       name="House 2")
+                       name="a house two")
         cls.p2.save()
         cls.a1 = Amenity(name="Wifi")
         cls.a1.save()
         cls.a2 = Amenity(name="Cable")
         cls.a2.save()
-        cls.a3 = Amenity(name="Eth")
+        cls.a3 = Amenity(name="Bucket Shower")
         cls.a3.save()
         storage.save()
 
