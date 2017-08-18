@@ -143,17 +143,18 @@ class HBNBCommand(cmd.Cmd):
         """
         arg = arg.split()
         error = self.__class_err(arg)
-        if not error:
-            k = arg[0]
-            if k in CNC:
-                class_obj = CNC[k]
-                if len(arg) > 1:
-                    d = self.create_dict({}, arg[1:])
-                else:
-                    d = {}
-                my_obj = class_obj(**d)
-                my_obj.save()
-                print(my_obj.id)
+        if error:
+            return
+        k = arg[0]
+        if k in CNC:
+            class_obj = CNC[k]
+            if len(arg) > 1:
+                d = self.create_dict({}, arg[1:])
+            else:
+                d = {}
+            my_obj = class_obj(**d)
+            my_obj.save()
+            print(my_obj.id)
 
     def do_show(self, arg):
         """show: show [ARG] [ARG1]
@@ -184,25 +185,26 @@ class HBNBCommand(cmd.Cmd):
         error = 0
         if arg:
             error = self.__class_err(arg)
-        if not error:
-            print('[', end='')
-            storage_objs = storage.all()
-            l = 0
-            if arg:
-                for v in storage_objs.values():
-                    if type(v).__name__ == CNC[arg[0]].__name__:
-                        l += 1
-                c = 0
-                for v in storage_objs.values():
-                    if type(v).__name__ == CNC[arg[0]].__name__:
-                        c += 1
-                        print(v, end=(', ' if c < l else ''))
-            else:
-                l = len(storage_objs)
-                c = 0
-                for v in storage_objs.values():
+            if error:
+                return
+        print('[', end='')
+        storage_objs = storage.all()
+        l = 0
+        if arg:
+            for v in storage_objs.values():
+                if type(v).__name__ == CNC[arg[0]].__name__:
+                    l += 1
+            c = 0
+            for v in storage_objs.values():
+                if type(v).__name__ == CNC[arg[0]].__name__:
+                    c += 1
                     print(v, end=(', ' if c < l else ''))
-            print(']')
+        else:
+            l = len(storage_objs)
+            c = 0
+            for v in storage_objs.values():
+                print(v, end=(', ' if c < l else ''))
+        print(']')
 
     def do_destroy(self, arg):
         """destroy: destroy [ARG] [ARG1]
@@ -216,13 +218,14 @@ class HBNBCommand(cmd.Cmd):
         error = self.__class_err(arg)
         if not error:
             error += self.__id_err(arg)
-        if not error:
-            storage_objs = storage.all()
-            for k in storage_objs.keys():
-                if arg[1] in k and arg[0] in k:
-                    to_delete = storage_objs[k]
-            to_delete.delete()
-            storage.save()
+        if error:
+            return
+        storage_objs = storage.all()
+        for k in storage_objs.keys():
+            if arg[1] in k and arg[0] in k:
+                to_delete = storage_objs[k]
+        to_delete.delete()
+        storage.save()
 
     def __rremove(self, s, l):
         """removes characters in the input list from input string"""
@@ -253,18 +256,19 @@ class HBNBCommand(cmd.Cmd):
         error = self.__class_err(arg)
         if not error:
             error += self.__id_err(arg)
-        if not error:
-            valid_id = 0
-            storage_objs = storage.all()
-            for k in storage_objs.keys():
-                if arg[1] in k and arg[0] in k:
-                    key = k
-            if len(arg) < 3:
-                print(HBNBCommand.ERR[4])
-            elif len(arg) < 4:
-                print(HBNBCommand.ERR[5])
-            else:
-                return [1, arg, d, storage_objs, key]
+        if error:
+            return [0]
+        valid_id = 0
+        storage_objs = storage.all()
+        for k in storage_objs.keys():
+            if arg[1] in k and arg[0] in k:
+                key = k
+        if len(arg) < 3:
+            print(HBNBCommand.ERR[4])
+        elif len(arg) < 4:
+            print(HBNBCommand.ERR[5])
+        else:
+            return [1, arg, d, storage_objs, key]
         return [0]
 
     def do_update(self, arg):
