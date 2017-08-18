@@ -44,14 +44,11 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """instantiation of new BaseModel Class"""
-        try:
-            if kwargs:
-                self.__set_attributes(kwargs)
-            else:
-                self.id = str(uuid4())
-                self.created_at = utcnow()
-        except Exception as e:
-            models.storage.handle_exception(e)
+        if kwargs:
+            self.__set_attributes(kwargs)
+        else:
+            self.id = str(uuid4())
+            self.created_at = utcnow()
 
     def __set_attributes(self, kwargs):
         """converts kwargs values to python class attributes"""
@@ -76,7 +73,7 @@ class BaseModel:
     def __is_serializable(self, obj_v):
         """checks if object is serializable"""
         try:
-            nada = json.dumps(obj_v)
+            json.dumps(obj_v)
             return True
         except:
             return False

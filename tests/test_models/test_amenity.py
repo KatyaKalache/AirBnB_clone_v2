@@ -41,7 +41,7 @@ class TestAmenityDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in amenity file"""
         AF = TestAmenityDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestAmenityInstances(unittest.TestCase):

@@ -66,7 +66,7 @@ class TestHBNBcmdDocs(unittest.TestCase):
         AF = TestHBNBcmdDocs.all_funcs
         for f in AF:
             if "_HBNBCommand_" in f[0]:
-                self.assertTrue(len(f[1].__doc__) > 1)
+                self.assertIsNotNone(f[1].__doc__)
 
 
 @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
@@ -193,19 +193,19 @@ class TestHBNBcmdCreateDB(unittest.TestCase):
         with redirect_streams() as (std_out, std_err):
             CLI.do_create('State '
                           'name="California"')
-        TestHBNBcmdCreateDB.test_state_id = std_out.getvalue()[:-1]
+        cls.test_state_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
             CLI.do_create('User '
                           'email="bettyholbertn@gmail.com" '
                           'password="apass" '
                           'first_name="a_name" '
                           'last_name="a_last_name" ')
-        TestHBNBcmdCreateDB.test_user_id = std_out.getvalue()[:-1]
+        cls.test_user_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
             CLI.do_create('City '
                           'state_id="{}" '
                           'name="SanFrancisco"'.format(cls.test_state_id))
-        TestHBNBcmdCreateDB.test_city_id = std_out.getvalue()[:-1]
+        cls.test_city_id = std_out.getvalue()[:-1]
         with redirect_streams() as (std_out, std_err):
             CLI.do_create('Place '
                           'city_id="{}" '
@@ -215,7 +215,7 @@ class TestHBNBcmdCreateDB(unittest.TestCase):
                           'number_bathrooms=2 '
                           'max_guest=10'.format(cls.test_city_id,
                                                 cls.test_user_id))
-        TestHBNBcmdCreateDB.test_place_id = std_out.getvalue()[:-1]
+        cls.test_place_id = std_out.getvalue()[:-1]
         print('... done creating')
         storage_objs = storage.all()
         for v in storage_objs.values():

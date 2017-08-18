@@ -42,7 +42,7 @@ class TestCityDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in city file"""
         AF = TestCityDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestCityInstances(unittest.TestCase):

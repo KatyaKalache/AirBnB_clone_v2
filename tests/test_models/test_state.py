@@ -41,7 +41,7 @@ class TestStateDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in state file"""
         AF = TestStateDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestStateInstances(unittest.TestCase):

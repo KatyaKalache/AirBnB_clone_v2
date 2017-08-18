@@ -48,14 +48,14 @@ class DBStorage:
     def all(self, cls=None):
         """queries all objects in DB session depending on the class name"""
         d = {}
-        if not cls:
-            for c in DBStorage.CNC.values():
-                a_query = self.__session.query(c)
-                for obj in a_query:
-                    obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
-                    d[obj_ref] = obj
-        else:
+        if cls:
             a_query = self.__session.query(cls)
+            for obj in a_query:
+                obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+                d[obj_ref] = obj
+            return d
+        for c in DBStorage.CNC.values():
+            a_query = self.__session.query(c)
             for obj in a_query:
                 obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
                 d[obj_ref] = obj
@@ -63,18 +63,12 @@ class DBStorage:
 
     def new(self, obj):
         """add the object to the current DB session"""
-        try:
-            if obj:
-                self.__session.add(obj)
-        except Exception as e:
-            self.handle_exception(e)
+        if obj:
+            self.__session.add(obj)
 
     def save(self):
         """commit all changes of the current DB session"""
-        try:
-            self.__session.commit()
-        except Exception as e:
-            self.handle_exception(e)
+        self.__session.commit()
 
     def reload(self):
         """create all tables in DB & create current DB session from engine"""
@@ -97,7 +91,6 @@ class DBStorage:
                 to_delete.delete()
         self.save()
 
-    def handle_exception(self, e):
-        """rollsback session in event of error"""
-        print("ERROR, Exception: {}".format(e.args[0]))
+    def rollback_session(self):
+        """rollsback a session in the event of an exception"""
         self.__session.rollback()

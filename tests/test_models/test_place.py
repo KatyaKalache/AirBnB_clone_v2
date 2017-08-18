@@ -44,7 +44,7 @@ class TestPlaceDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in place file"""
         AF = TestPlaceDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestPlaceInstances(unittest.TestCase):
