@@ -12,7 +12,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 hbuser = environ.get('HBNB_MYSQL_USER')
 hbpw = environ.get('HBNB_MYSQL_PWD')
@@ -79,8 +79,8 @@ class DBStorage:
     def reload(self):
         """create all tables in DB & create current DB session from engine"""
         Base.metadata.create_all(self.__engine)
-        Session = sessionmaker(bind=self.__engine)
-        self.__session = Session()
+        Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        self.__session = scoped_session(Session)
 
     def delete(self, obj=None):
         """delete from the current DB session"""
