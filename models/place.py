@@ -57,7 +57,3 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = ['', '']
-
-    def __init__(self, *args, **kwargs):
-        """instantiates a new place"""
-        super().__init__(self, *args, **kwargs)

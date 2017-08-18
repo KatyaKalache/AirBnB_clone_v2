@@ -20,7 +20,3 @@ class Amenity(BaseModel, Base):
         )
     else:
         name = ''
-
-    def __init__(self, *args, **kwargs):
-        """instantiates a new amenity"""
-        super().__init__(self, *args, **kwargs)
