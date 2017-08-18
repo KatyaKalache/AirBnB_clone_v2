@@ -78,10 +78,10 @@ class TestReviewInstances(unittest.TestCase):
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         my_str = str(self.review)
-        actual = 0
+        not_in = True
         if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
+            not_in = False
+        self.assertTrue(not_in)
 
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
@@ -93,12 +93,12 @@ class TestReviewInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.review_json = self.review.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.review_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value Review"""

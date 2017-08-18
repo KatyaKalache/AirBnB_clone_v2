@@ -91,12 +91,12 @@ class TestCityInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.city_json = self.city.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.city_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value City"""

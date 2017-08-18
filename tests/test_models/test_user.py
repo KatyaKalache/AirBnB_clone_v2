@@ -84,10 +84,10 @@ class TestUserInstances(unittest.TestCase):
         """... should not have updated attribute"""
         self.user = User()
         my_str = str(self.user)
-        actual = 0
+        not_in = True
         if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
+            not_in = False
+        self.assertTrue(not_in)
 
     @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
                      "Test only for DB Storage: ")
@@ -100,12 +100,12 @@ class TestUserInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.user_json = self.user.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.user_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value User"""

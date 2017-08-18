@@ -77,10 +77,10 @@ class TestAmenityInstances(unittest.TestCase):
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         my_str = str(self.amenity)
-        actual = 0
+        not_in = True
         if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
+            not_in = False
+        self.assertTrue(not_in)
 
     @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
                      "DB Storage only initializes with updated at")
@@ -93,12 +93,12 @@ class TestAmenityInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.amenity_json = self.amenity.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.amenity_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value Amenity"""
