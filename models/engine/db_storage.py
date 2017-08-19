@@ -49,7 +49,7 @@ class DBStorage:
         """queries all objects in DB session depending on the class name"""
         d = {}
         if cls:
-            a_query = self.__session.query(cls)
+            a_query = self.__session.query(DBStorage.CNC[cls])
             for obj in a_query:
                 obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
                 d[obj_ref] = obj
@@ -65,6 +65,21 @@ class DBStorage:
         """add the object to the current DB session"""
         if obj:
             self.__session.add(obj)
+
+    def __remove_duplicates(self):
+        """removes duplicates to avoid Duplicate entry Exception"""
+        """
+        for obj in self.__dict__.values():
+            for val in obj.__dict__.values():
+                print(type(val).__name__)
+                if type(val).__name__ == 'InstrumentedList':
+                    print(type(val).__name__)
+                    for x in val:
+                        if val.count(x) > 1:
+                            print('before: {}'.format(val))
+                            val.remove(x)
+                            print('after: {}'.format(val))
+        """
 
     def save(self):
         """commit all changes of the current DB session"""
