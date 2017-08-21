@@ -13,18 +13,16 @@ class PlaceAmenity(Base):
     """creates virtual table to connect tables for Place and Amenity"""
     if environ.get('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = "place_amenity"
-        # id = Column(Integer, nullable=False, primary_key=True)
-        # may need to add this id here
-        # & then remove 'primary_key=True from place_id & amenity_id
+        id = Column(Integer, nullable=False, primary_key=True)
+        # may need to remove this id here
+        # & then add 'primary_key=True from place_id & amenity_id
         metadata = Base.metadata
         place_id = Column(String(60),
                           ForeignKey('places.id'),
-                          nullable=False,
-                          primary_key=True)
+                          nullable=False)
         amenity_id = Column(String(60),
                             ForeignKey('amenities.id'),
-                            nullable=False,
-                            primary_key=True)
+                            nullable=False)
 
 
 class Place(BaseModel, Base):

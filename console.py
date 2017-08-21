@@ -188,22 +188,16 @@ class HBNBCommand(cmd.Cmd):
             if error:
                 return
         print('[', end='')
-        storage_objs = storage.all()
         l = 0
         if arg:
-            for v in storage_objs.values():
-                if type(v).__name__ == CNC[arg[0]].__name__:
-                    l += 1
-            c = 0
-            for v in storage_objs.values():
-                if type(v).__name__ == CNC[arg[0]].__name__:
-                    c += 1
-                    print(v, end=(', ' if c < l else ''))
+            storage_objs = storage.all(arg[0])
         else:
-            l = len(storage_objs)
-            c = 0
-            for v in storage_objs.values():
-                print(v, end=(', ' if c < l else ''))
+            storage_objs = storage.all()
+        l = len(storage_objs)
+        c = 0
+        for v in storage_objs.values():
+            c += 1
+            print(v, end=(', ' if c < l else ''))
         print(']')
 
     def do_destroy(self, arg):

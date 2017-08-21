@@ -36,6 +36,12 @@ class FileStorage:
 
     def all(self, cls=None):
         """returns private attribute: __objects"""
+        if cls:
+            new_objs = {}
+            for clsid, obj in FileStorage.__objects.items():
+                if type(obj).__name__ == cls:
+                    new_objs[clsid] = obj
+            return new_objs
         return FileStorage.__objects
 
     def new(self, obj):

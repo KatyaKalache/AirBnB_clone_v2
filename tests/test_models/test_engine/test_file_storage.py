@@ -12,6 +12,7 @@ import inspect
 environ = os.environ
 User = models.user.User
 BaseModel = models.base_model.BaseModel
+State = models.state.State
 if environ.get('HBNB_TYPE_STORAGE') != 'db':
     FileStorage = models.file_storage.FileStorage
 storage = models.storage
@@ -70,7 +71,9 @@ class TestBmFsInstances(unittest.TestCase):
     def setUp(self):
         """initializes new storage object for testing"""
         self.bm_obj = BaseModel()
+        self.state_obj = State(name="Illinoi")
         self.bm_obj.save()
+        self.state_obj.save()
 
     def tearDown(self):
         """tidies up the tests removing storage objects"""
@@ -93,6 +96,16 @@ class TestBmFsInstances(unittest.TestCase):
         actual = False
         for k in all_obj.keys():
             if bm_id in k:
+                actual = True
+        self.assertTrue(True)
+
+    def test_all_state(self):
+        """... checks if all() function returns newly created state instance"""
+        state_id = self.state_obj.id
+        state_objs = storage.all("State")
+        actual = False
+        for k in state_objs.keys():
+            if state_id in k:
                 actual = True
         self.assertTrue(True)
 
