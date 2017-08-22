@@ -6,12 +6,9 @@ import cmd
 from models import base_model, user, storage, CNC
 BaseModel = base_model.BaseModel
 User = user.User
-<<<<<<< HEAD
 FS = storage
-=======
 
 
->>>>>>> a151c757465190642dc8f816a559e08867c41c54
 class HBNBCommand(cmd.Cmd):
     """Command inerpreter class"""
     prompt = '(hbnb) '
