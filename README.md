@@ -7,7 +7,30 @@
 ## Description
 
 Project attempts to clone the the AirBnB application and website, including the
-database, storage, RESTful API, Web Framework, and Front End.
+database, storage, RESTful API, Web Framework, and Front End.  Currently the
+application is designed to run with 2 storage engine models:
+
+* File Storage Engine:
+
+  * `/models/engine/file_storage.py`
+
+* Database Storage Engine:
+
+  * `/models/engine/db_storage.py`
+
+  * To Setup the DataBase for testing and development, there are 2 setup
+  scripts that setup a database with certain privileges: `setup_mysql_test.sql`
+  & `setup_mysql_test.sql`
+
+  * The Database uses Environmental Variables for tests.  To execute tests with
+  the environmental variables prepend these declarations to the execution
+  command:
+
+```
+$ HBNB_MYSQL_USER=hbnb_test HBNB_MYSQL_PWD=hbnb_test_pwd \
+HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_test_db HBNB_TYPE_STORAGE=db \
+[COMMAND HERE]
+```
 
 ## Environment
 
@@ -20,14 +43,29 @@ database, storage, RESTful API, Web Framework, and Front End.
 
 ## Testing
 
-#### `unittest`
+### `unittest`
 
 This project uses python library, `unittest` to run tests on all python files.
 All unittests are in the `./tests` directory with the command:
 
-* `python3 -m unittest discover -v ./tests/`
+* File Storage Engine Model:
 
-The bash script `init_test.sh` executes all these tests:
+  * `python3 -m unittest discover -v ./tests/`
+
+* DataBase Storage Engine Model
+
+```
+$ HBNB_MYSQL_USER=hbnb_test HBNB_MYSQL_PWD=hbnb_test_pwd \
+HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_test_db HBNB_TYPE_STORAGE=db \
+python3 -m unittest discover -v ./tests/
+```
+
+---
+
+### All Tests
+
+The bash script `init_test.sh` executes all these tests for both File Storage &
+DataBase Engine Models:
 
   * checks `pep8` style
 
@@ -37,26 +75,36 @@ The bash script `init_test.sh` executes all these tests:
 
   * cleans up all `__pycache__` directories and the storage file, `file.json`
 
-**Usage:**
+  * **Usage `init_test.sh`:**
 
 ```
 $ ./dev/init_test.sh
 ```
 
-#### CLI Interactive Tests
+---
 
-This project uses python library, `cmd` to run tests in an interactive command
-line interface.  To begin tests with the CLI, run this script:
+### CLI Interactive Tests
 
-```
-$ ./console.py
-```
+* This project uses python library, `cmd` to run tests in an interactive command
+  line interface.  To begin tests with the CLI, run this script:
 
-* For a detailed description of all tests, run these commands inside the
-custom CLI:
+#### File Storage Engine Model
 
 ```
 $ ./console.py
+```
+
+#### To execute the CLI using the Database Storage Engine Model:
+
+```
+$ HBNB_MYSQL_USER=hbnb_test HBNB_MYSQL_PWD=hbnb_test_pwd \
+HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_test_db HBNB_TYPE_STORAGE=db \
+./console.py
+```
+
+#### For a detailed description of all tests, run these commands in the CLI:
+
+```
 (hbnb) help help
 List available commands with "help" or detailed help with "help cmd".
 (hbnb) help
@@ -86,10 +134,12 @@ create: create [ARG] [PARAM 1] [PARAM 2] ...
 
   * **update:** `<class name>.update(<id>, <attribute name>, <attribute value>)`
 
-  * **update with dictionary:** `<class name>.update(<id>, <dictionary representation>)`
+  * **update with dictionary:** `<class name>.update(<id>,
+    <dictionary representation>)`
 
+---
 
-#### Continuous Integration
+### Continuous Integration Tests
 
 Uses [Travis-CI](https://travis-ci.org/) to run all tests on all commits to the
 github repo
@@ -97,7 +147,8 @@ github repo
 ## Authors
 
 * MJ Johnson, [@mj31508](https://github.com/mj31508)
-* David John Coleman II, [davidjohncoleman.com](http://www.davidjohncoleman.com/)
+* David John Coleman II,
+  [davidjohncoleman.com](http://www.davidjohncoleman.com/)
 * Katya Kalache, [@katyakalache](https://github.com/katyakalache)
 
 ## License

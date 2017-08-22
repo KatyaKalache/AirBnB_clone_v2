@@ -3,23 +3,29 @@
 Handles I/O, writing and reading, of JSON for storage of all class instances
 """
 import json
-from models import base_model, amenity, city, place, review, state, user
+from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 from datetime import datetime
 
 strptime = datetime.strptime
-to_json = base_model.BaseModel.to_json
+to_json = BaseModel.to_json
 
 
 class FileStorage:
     """handles long term storage of all class instances"""
     CNC = {
-        'BaseModel': base_model.BaseModel,
-        'Amenity': amenity.Amenity,
-        'City': city.City,
-        'Place': place.Place,
-        'Review': review.Review,
-        'State': state.State,
-        'User': user.User
+        'BaseModel': BaseModel,
+        'Amenity': Amenity,
+        'City': City,
+        'Place': Place,
+        'Review': Review,
+        'State': State,
+        'User': User
     }
     """CNC - this variable is a dictionary with:
     keys: Class Names
@@ -28,14 +34,20 @@ class FileStorage:
     __file_path = './dev/file.json'
     __objects = {}
 
-    def all(self):
+    def all(self, cls=None):
         """returns private attribute: __objects"""
+        if cls:
+            new_objs = {}
+            for clsid, obj in FileStorage.__objects.items():
+                if type(obj).__name__ == cls:
+                    new_objs[clsid] = obj
+            return new_objs
         return FileStorage.__objects
 
     def new(self, obj):
-        """sets / updates in __objects the obj with key <obj class name>.id"""
-        bm_id = "{}.{}".format(type(obj).__name__, obj.id)
-        FileStorage.__objects[bm_id] = obj
+        """sets / updates __objects: key = <Class>.id: val = the obj"""
+        obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+        FileStorage.__objects[obj_ref] = obj
 
     def save(self):
         """serializes __objects to the JSON file (path: __file_path)"""
@@ -58,6 +70,11 @@ class FileStorage:
         for o_id, d in new_objs.items():
             k_cls = d['__class__']
             FileStorage.__objects[o_id] = FileStorage.CNC[k_cls](**d)
+
+    def delete(self, obj=None):
+        """deletes just the input object from the __objects variable"""
+        obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
+        del FileStorage.__objects[obj_ref]
 
     def delete_all(self):
         """deletes all stored objects, for testing purposes"""

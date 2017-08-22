@@ -7,7 +7,9 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
+State = models.State
 City = models.City
 BaseModel = models.BaseModel
 
@@ -40,11 +42,17 @@ class TestCityDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in city file"""
         AF = TestCityDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestCityInstances(unittest.TestCase):
     """testing for class instances"""
+
+    state = State(**{"name": "California"})
+    state.save()
+    city = City(**{"state_id": "{}".format(state.id),
+                   "name": "SanFrancisco"})
+    city.save()
 
     @classmethod
     def setUpClass(cls):
@@ -55,7 +63,8 @@ class TestCityInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new city for testing"""
-        self.city = City()
+        self.state = TestCityInstances.state
+        self.city = TestCityInstances.city
 
     def test_instantiation(self):
         """... checks if City is properly instantiated"""
@@ -71,18 +80,10 @@ class TestCityInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
-    def test_instantiation_no_updated(self):
-        """... should not have updated attribute"""
-        self.city = City()
-        my_str = str(self.city)
-        actual = 0
-        if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
-
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                     "DB Storage is initialized with updated at")
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.city.save()
         actual = type(self.city.updated_at)
         expected = type(datetime.now())
         self.assertEqual(expected, actual)
@@ -90,12 +91,12 @@ class TestCityInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.city_json = self.city.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.city_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value City"""
@@ -106,14 +107,13 @@ class TestCityInstances(unittest.TestCase):
         expected = 'City'
         self.assertEqual(expected, actual)
 
-    def test_email_attribute(self):
-        """... add email attribute"""
-        self.city.state_id = 'IL'
-        if hasattr(self.city, 'state_id'):
-            actual = self.city.state_id
+    def test_name_attribute(self):
+        """... add update attribute"""
+        if hasattr(self.city, 'name'):
+            actual = self.city.name
         else:
             actual = ''
-        expected = 'IL'
+        expected = 'SanFrancisco'
         self.assertEqual(expected, actual)
 
 if __name__ == '__main__':

@@ -6,7 +6,12 @@ import cmd
 from models import base_model, user, storage, CNC
 BaseModel = base_model.BaseModel
 User = user.User
+<<<<<<< HEAD
 FS = storage
+=======
+
+
+>>>>>>> a151c757465190642dc8f816a559e08867c41c54
 class HBNBCommand(cmd.Cmd):
     """Command inerpreter class"""
     prompt = '(hbnb) '
@@ -35,7 +40,8 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         """default response for unknown commands"""
-        pass
+        print("This \"{}\" is invalid, run \"help\" "
+              "for more explanations".format(line))
 
     def emptyline(self):
         """Called when an empty line is entered in response to the prompt."""
@@ -60,8 +66,8 @@ class HBNBCommand(cmd.Cmd):
             error += 1
             print(HBNBCommand.ERR[2])
         if not error:
-            fs_o = FS.all()
-            for k, v in fs_o.items():
+            storage_objs = storage.all()
+            for k, v in storage_objs.items():
                 temp_id = k.split('.')[1]
                 if temp_id == arg[1] and arg[0] in k:
                     return error
@@ -72,6 +78,7 @@ class HBNBCommand(cmd.Cmd):
     def do_airbnb(self, arg):
         """airbnb: airbnb
         SYNOPSIS: Command changes prompt string"""
+        print("{} type {} split {}".format(arg, type(arg), arg.split()))
         print("                      __ ___                        ")
         print("    _     _  _ _||\ |/  \ | _  _  _|_|_     _  _ _| ")
         print("|_||_)\)/(_|| (_|| \|\__/ || )(_)| |_| )\)/(_|| (_| ")
@@ -105,15 +112,13 @@ class HBNBCommand(cmd.Cmd):
     def __update_val(self, v):
         """updates string to proper type, either int, float, or
         string with proper spaces and " symbols"""
-        if v[0] == '"':
-            v = v[1:]
-        if v[-1] == '"':
-            v = v[0:-1]
-        v = v.replace('"', '\"')
-        v = v.replace('_', ' ')
+        if v[0] == '"' and v[-1] == '"':
+            v = v[1:-1]
+            v = v.replace('"', '\"')
+            v = v.replace('_', ' ')
+            return v
         if v.isdigit():
-            if len(v) == len(str(int(v))):
-                v = int(v)
+            v = int(v)
         elif self.__isfloat(v):
             v = float(v)
         return v
@@ -141,15 +146,18 @@ class HBNBCommand(cmd.Cmd):
         """
         arg = arg.split()
         error = self.__class_err(arg)
-        if not error:
-            for k, v in CNC.items():
-                if k == arg[0]:
-                    d = {}
-                    if len(arg) > 1:
-                        d = self.create_dict(d, arg[1:])
-                    my_obj = (v(**d) if d else v())
-                    my_obj.save()
-                    print(my_obj.id)
+        if error:
+            return
+        k = arg[0]
+        if k in CNC:
+            class_obj = CNC[k]
+            if len(arg) > 1:
+                d = self.create_dict({}, arg[1:])
+            else:
+                d = {}
+            my_obj = class_obj(**d)
+            my_obj.save()
+            print(my_obj.id)
 
     def do_show(self, arg):
         """show: show [ARG] [ARG1]
@@ -164,8 +172,8 @@ class HBNBCommand(cmd.Cmd):
         if not error:
             error += self.__id_err(arg)
         if not error:
-            fs_o = FS.all()
-            for k, v in fs_o.items():
+            storage_objs = storage.all()
+            for k, v in storage_objs.items():
                 if arg[1] in k and arg[0] in k:
                     print(v)
 
@@ -180,25 +188,20 @@ class HBNBCommand(cmd.Cmd):
         error = 0
         if arg:
             error = self.__class_err(arg)
-        if not error:
-            print('[', end='')
-            fs_o = FS.all()
-            l = 0
-            if arg:
-                for v in fs_o.values():
-                    if type(v).__name__ == CNC[arg[0]].__name__:
-                        l += 1
-                c = 0
-                for v in fs_o.values():
-                    if type(v).__name__ == CNC[arg[0]].__name__:
-                        c += 1
-                        print(v, end=(', ' if c < l else ''))
-            else:
-                l = len(fs_o)
-                c = 0
-                for v in fs_o.values():
-                    print(v, end=(', ' if c < l else ''))
-            print(']')
+            if error:
+                return
+        print('[', end='')
+        l = 0
+        if arg:
+            storage_objs = storage.all(arg[0])
+        else:
+            storage_objs = storage.all()
+        l = len(storage_objs)
+        c = 0
+        for v in storage_objs.values():
+            c += 1
+            print(v, end=(', ' if c < l else ''))
+        print(']')
 
     def do_destroy(self, arg):
         """destroy: destroy [ARG] [ARG1]
@@ -212,13 +215,14 @@ class HBNBCommand(cmd.Cmd):
         error = self.__class_err(arg)
         if not error:
             error += self.__id_err(arg)
-        if not error:
-            fs_o = FS.all()
-            for k in fs_o.keys():
-                if arg[1] in k and arg[0] in k:
-                    to_delete = fs_o[k]
-            del to_delete
-            FS.save()
+        if error:
+            return
+        storage_objs = storage.all()
+        for k in storage_objs.keys():
+            if arg[1] in k and arg[0] in k:
+                to_delete = storage_objs[k]
+        to_delete.delete()
+        storage.save()
 
     def __rremove(self, s, l):
         """removes characters in the input list from input string"""
@@ -249,18 +253,19 @@ class HBNBCommand(cmd.Cmd):
         error = self.__class_err(arg)
         if not error:
             error += self.__id_err(arg)
-        if not error:
-            valid_id = 0
-            fs_o = FS.all()
-            for k in fs_o.keys():
-                if arg[1] in k and arg[0] in k:
-                    key = k
-            if len(arg) < 3:
-                print(HBNBCommand.ERR[4])
-            elif len(arg) < 4:
-                print(HBNBCommand.ERR[5])
-            else:
-                return [1, arg, d, fs_o, key]
+        if error:
+            return [0]
+        valid_id = 0
+        storage_objs = storage.all()
+        for k in storage_objs.keys():
+            if arg[1] in k and arg[0] in k:
+                key = k
+        if len(arg) < 3:
+            print(HBNBCommand.ERR[4])
+        elif len(arg) < 4:
+            print(HBNBCommand.ERR[5])
+        else:
+            return [1, arg, d, storage_objs, key]
         return [0]
 
     def do_update(self, arg):
@@ -278,18 +283,18 @@ class HBNBCommand(cmd.Cmd):
         if arg_inv[0]:
             arg = arg_inv[1]
             d = arg_inv[2]
-            fs_o = arg_inv[3]
+            storage_objs = arg_inv[3]
             key = arg_inv[4]
             if not d:
                 avalue = arg[3].strip('"')
                 if avalue.isdigit():
                     avalue = int(avalue)
-                fs_o[key].bm_update(arg[2], avalue)
+                storage_objs[key].bm_update(arg[2], avalue)
             else:
                 for k, v in d.items():
                     if v.isdigit():
                         v = int(v)
-                    fs_o[key].bm_update(k, v)
+                    storage_objs[key].bm_update(k, v)
 
     def do_BaseModel(self, arg):
         """class method with .function() syntax
@@ -329,9 +334,9 @@ class HBNBCommand(cmd.Cmd):
     def __count(self, arg):
         """counts the number objects in File Storage"""
         args = arg.split()
-        fs_o = FS.all()
+        storage_objs = storage.all()
         count = 0
-        for k in fs_o.keys():
+        for k in storage_objs.keys():
             if args[0] in k:
                 count += 1
         print(count)

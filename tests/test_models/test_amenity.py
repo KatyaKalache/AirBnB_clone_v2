@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 Amenity = models.Amenity
 BaseModel = models.BaseModel
@@ -40,7 +41,7 @@ class TestAmenityDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in amenity file"""
         AF = TestAmenityDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestAmenityInstances(unittest.TestCase):
@@ -55,7 +56,7 @@ class TestAmenityInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new amenity for testing"""
-        self.amenity = Amenity()
+        self.amenity = Amenity({"name": "buckets"})
 
     def test_instantiation(self):
         """... checks if Amenity is properly instantiated"""
@@ -71,30 +72,33 @@ class TestAmenityInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') == 'db',
+                     "DB Storage is initialized with updated at")
     def test_instantiation_no_updated(self):
         """... should not have updated attribute"""
         my_str = str(self.amenity)
-        actual = 0
+        not_in = True
         if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
+            not_in = False
+        self.assertTrue(not_in)
 
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                     "DB Storage only initializes with updated at")
     def test_updated_at(self):
-        """... save function should add updated_at attribute"""
-        self.amenity.save()
-        actual = type(self.amenity.updated_at)
-        expected = type(datetime.now())
+        """... to see if updated at included with initialization"""
+        actual = type(type(self.amenity.updated_at))
+        expected = type(type(datetime.now()))
         self.assertEqual(expected, actual)
 
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.amenity_json = self.amenity.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.amenity_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value Amenity"""
@@ -106,7 +110,7 @@ class TestAmenityInstances(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_email_attribute(self):
-        """... add email attribute"""
+        """... update name attribute"""
         self.amenity.name = "greatWifi"
         if hasattr(self.amenity, 'name'):
             actual = self.amenity.name

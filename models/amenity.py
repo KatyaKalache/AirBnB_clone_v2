@@ -3,14 +3,20 @@
 Amenity Class from Models Module
 """
 
-from models.base_model import BaseModel
+from os import environ
+from models.base_model import BaseModel, Base, Column, String, relationship
 
 
-class Amenity(BaseModel):
+class Amenity(BaseModel, Base):
     """Amenity class handles all application amenities"""
 
-    name = ''
-
-    def __init__(self, *args, **kwargs):
-        """instantiates a new amenity"""
-        super().__init__(self, *args, **kwargs)
+    if environ.get('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = "amenities"
+        name = Column(String(128), nullable=False)
+        place_amenities = relationship(
+            "PlaceAmenity",
+            cascade="all, delete-orphan",
+            backref="amenities"
+        )
+    else:
+        name = ''

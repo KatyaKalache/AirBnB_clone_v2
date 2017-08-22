@@ -7,6 +7,7 @@ from datetime import datetime
 import models
 import json
 import inspect
+from os import environ
 
 State = models.State
 BaseModel = models.BaseModel
@@ -40,11 +41,14 @@ class TestStateDocs(unittest.TestCase):
         """... tests for ALL DOCS for all functions in state file"""
         AF = TestStateDocs.all_funcs
         for f in AF:
-            self.assertTrue(len(f[1].__doc__) > 1)
+            self.assertIsNotNone(f[1].__doc__)
 
 
 class TestStateInstances(unittest.TestCase):
     """testing for class instances"""
+
+    state = State(**{"name": "California"})
+    state.save()
 
     @classmethod
     def setUpClass(cls):
@@ -55,7 +59,7 @@ class TestStateInstances(unittest.TestCase):
 
     def setUp(self):
         """initializes new state for testing"""
-        self.state = State()
+        self.state = TestStateInstances.state
 
     def test_instantiation(self):
         """... checks if State is properly instantiated"""
@@ -71,17 +75,10 @@ class TestStateInstances(unittest.TestCase):
                 actual += 1
         self.assertTrue(3 == actual)
 
-    def test_instantiation_no_updated(self):
-        """... should not have updated attribute"""
-        my_str = str(self.state)
-        actual = 0
-        if 'updated_at' in my_str:
-            actual += 1
-        self.assertTrue(0 == actual)
-
+    @unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db',
+                     "File Storage not initiated w/ updated_at")
     def test_updated_at(self):
         """... save function should add updated_at attribute"""
-        self.state.save()
         actual = type(self.state.updated_at)
         expected = type(datetime.now())
         self.assertEqual(expected, actual)
@@ -89,12 +86,12 @@ class TestStateInstances(unittest.TestCase):
     def test_to_json(self):
         """... to_json should return serializable dict object"""
         self.state_json = self.state.to_json()
-        actual = 1
+        serializable = True
         try:
             serialized = json.dumps(self.state_json)
         except:
-            actual = 0
-        self.assertTrue(1 == actual)
+            serializable = False
+        self.assertTrue(serializable)
 
     def test_json_class(self):
         """... to_json should include class key with value State"""
@@ -107,12 +104,11 @@ class TestStateInstances(unittest.TestCase):
 
     def test_name_attribute(self):
         """... add name attribute"""
-        self.state.name = "betty"
         if hasattr(self.state, 'name'):
             actual = self.state.name
         else:
-            acual = ''
-        expected = "betty"
+            actual = ''
+        expected = "California"
         self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
