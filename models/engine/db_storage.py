@@ -109,3 +109,7 @@ class DBStorage:
     def rollback_session(self):
         """rollsback a session in the event of an exception"""
         self.__session.rollback()
+
+    def close(self):
+        self.__session = scoped_session(sessionmaker(bind=self.__engine))
+        self.__session.remove()

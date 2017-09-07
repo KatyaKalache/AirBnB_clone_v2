@@ -18,3 +18,12 @@ class State(BaseModel, Base):
                               backref='state')
     else:
         name = ''
+
+    def cities(self):
+         cities = relationship('City',
+                              cascade='all, delete-orphan',
+                              backref='state')
+         return cities
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
