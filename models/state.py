@@ -20,10 +20,10 @@ class State(BaseModel, Base):
         name = ''
 
     def cities(self):
-         cities = relationship('City',
+        cities = relationship('City',
                               cascade='all, delete-orphan',
                               backref='state')
-         return cities
+        return cities
 
     def __init__(self, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
