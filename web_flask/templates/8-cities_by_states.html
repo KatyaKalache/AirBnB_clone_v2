@@ -4,14 +4,20 @@
         <TITLE>HBNB</TITLE>
     </HEAD>
     <BODY>
-        <H1>States</H1>
-        <UL>
+      <UL>
+	<LI>
+	  <H1>States</H1>
 	  {% for state in states|sort(attribute="name") %}
-	  <LI>{{ state.id }}: <B>{{ state.name }}</B></LI>
-	  {% endfor %}
+	<LI>{{ state.id }}: <B>{{ state.name }}</B></LI>
+	<UL>
 	  {% for city in cities|sort(attribute="name") %}
+	  {% if city.state_id == state.id %}
 	  <LI>{{ city.id }}: <B>{{ city.name }}</B></LI>
+	  {% endif %}
 	  {% endfor %}
 	</UL>
+	</LI>
+	{% endfor %}
+      </UL>
     </BODY>
 </HTML>
