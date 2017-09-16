@@ -57,6 +57,7 @@ def hbnb_7():
 @app.route('/cities_by_states', strict_slashes=False)
 def hbnb_8():
     return render_template('8-cities_by_states.html',
+                           states=storage.all("State").values(),
                            cities=storage.all("City").values())
 
 if __name__ == '__main__':
